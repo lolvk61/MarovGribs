@@ -1,25 +1,29 @@
-name: Build
+# Build the mod and run the in-game tests on every push and pull request.
 
+name: build
 on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - name: Checkout repository
+      - name: checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-
-      - name: Setup JDK 21
+      - name: setup jdk
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
-
-      - name: Setup Gradle
+      - name: setup gradle
         uses: gradle/actions/setup-gradle@v4
-
-      - name: Build with Gradle
+      - name: make gradle wrapper executable
+        run: chmod +x ./gradlew
+      - name: build
         run: ./gradlew build
+      - name: game tests
+        run: ./gradlew runGameTestServer
+      - name: capture build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Artifacts
+          path: build/libs/
