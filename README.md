@@ -12,9 +12,11 @@ russulas, an ore-hoarding miner, and the Death Cap boss of the dark forest.
 
 ![build](https://github.com/lolvk61/MarovGribs/actions/workflows/build.yml/badge.svg)
 
-NeoForge • Minecraft 1.21.1 • Java 21 • [Download](../../releases/latest)
+NeoForge • Minecraft 1.21.1 • Java 21 • v0.2.0 • [Download](../../releases/latest)
 
 [English](#english) | [Русский](#русский)
+
+<img src="art/previews/death_cap.png" width="130" alt="Death Cap"><img src="art/previews/parasol_grib.png" width="130" alt="Parasol Mushroom"><img src="art/previews/miner_grib.png" width="130" alt="Miner Mushroom"><img src="art/previews/russula.png" width="130" alt="Russula"><img src="art/previews/chanterelle_grib.png" width="130" alt="Chanterelle">
 
 </div>
 
@@ -22,43 +24,55 @@ NeoForge • Minecraft 1.21.1 • Java 21 • [Download](../../releases/latest)
 
 ## English
 
-### Features
+### What's new in 0.2.0
+A boss, six new mobs, two new mushrooms, forest mycelium and mushroom beds that come alive —
+see below.
+
+### Mushrooms
 - **Hopcap** — tosses whoever steps on it into the air and cushions the landing. Sneak to walk
   over it. Eat it for Jump Boost II.
 - **Glowcap** — lights up caves and grows even on bare stone. Eat it for Night Vision.
 - **Puffball** — a natural trap: puffs a blinding, slowing spore cloud at anything that walks
   into it, then refills. Sneak past it safely. Eat it for Slow Falling.
 - **Fly Agaric** — Strength II, at the price of nausea and poison.
+- **Chanterelle** *(new)* — a mushroom with a fox's tail, eat it for Speed. Let a fox take one
+  in its mouth and something happens…
+- **Parasol sprout** *(new)* — bone meal grows it into a huge parasol 4–5 blocks tall.
+  Zombies and skeletons caught in daylight run for its shade.
+
+Mushrooms spread on their own and sprout from bone meal. **Forest Mycelium** *(new)* grows
+outside mushroom islands, and mushrooms on it spread five times faster. Dense beds of one
+mushroom *(new)* come alive and turn into their keeper mob.
+
+### Mobs
 - **Hopling** — a passive walking hopcap. Hops around, takes no fall damage, flees in huge
   leaps, breeds on hopcaps and now and then sheds a fresh one.
 - **Puffer** — a hostile puffball. Waddles up, swells and bursts into a poison cloud without
   dying; hit it in melee and it puffs at once.
 - **Agaric Guard** — a neutral fly agaric warrior. Pick a fly agaric near one and the whole
-  group comes at you with poisonous punches.
-- **Spore clouds** — puffy clouds that pop out, breathe and fade away, and affect everything
-  inside them, not just the ground.
-- **Spore Bomb** and **Marov Stew** — a throwable spore cloud and a stew with the best of all
-  four mushrooms.
-- **Chanterelle** — a mushroom with a fox's tail, eat it for Speed. Let a fox take one in its
-  mouth and it turns into **FlynnFlyTaggart**: a fearless fox in a marine's helmet that follows
-  you and hunts monsters, with a frenzy after every kill.
-- **Parasol mushroom** — bone meal grows the sprout into a huge parasol 4–5 blocks tall.
-  Zombies and skeletons caught in daylight run for its shade. There is also a walking one,
-  4.6 blocks tall: undead under its cap don't burn.
-- **Chanterelle** mob — a little funnel mushroom with a wagging fox tail; skittish like a fox,
-  tempted and bred with sweet berries.
-- **Russula** — a sheep-like mushroom that comes in dye colours. Dye it, shear it for caps of
-  its colour; grind a cap in a **Mortar and Pestle** for two dyes (other mushrooms work too).
-- **Miner Mushroom** — digs tunnels underground, collects ore in its backpack and lights the
-  way with glowcaps. Walls itself in when it sees you; dig it out to get the ore.
-- **Cordyceps Zombie** — a few wild zombies come out overgrown: a bit tougher and faster.
-- **Death Cap** — the dark forest boss: deadly spore bursts, rooting threads, summoned minions,
-  and a rage that heals it on mycelium. Drops its cap, a helmet that keeps poison off.
-- **Forest Mycelium** grows outside mushroom islands; mushrooms on it spread five times faster.
-  Dense beds of one mushroom come alive and spawn its keeper mob.
-- Once in a long while an agaric guard is born with a smiley face.
-- Mushrooms spread on their own and sprout from bone meal; every item explains its ability in
-  its tooltip (English and Russian).
+  group comes at you with poisonous punches. Once in a long while one is born with a smiley
+  face *(new)*.
+- **Russula** *(new)* — a sheep-like mushroom that comes in dye colours. Dye it, shear it for
+  caps of its colour.
+- **Miner Mushroom** *(new)* — digs tunnels underground, collects ore in its backpack and
+  lights the way with glowcaps. Walls itself in when it sees you; dig it out to get the ore.
+- **Parasol Mushroom** *(new)* — a slow 4.6-block giant; undead under its cap don't burn.
+- **Chanterelle** *(new)* — a little funnel mushroom with a wagging fox tail; skittish like a
+  fox, tempted and bred with sweet berries.
+- **FlynnFlyTaggart** *(new)* — what a fox becomes after taking a chanterelle: a fearless fox
+  in a marine's helmet that follows you and hunts monsters, with a frenzy after every kill.
+- **Cordyceps Zombie** *(new)* — a few wild zombies come out overgrown: tougher and faster.
+
+### Boss: Death Cap *(new)*
+Haunts the dark forest at night: deadly spore bursts, rooting threads, summoned minions, and a
+rage that heals it on mycelium. Drops its cap, a helmet that keeps poison and spores off.
+
+### Items
+- **Spore clouds** — puffballs, puffers and spore bombs release puffy clouds that affect
+  everything inside them.
+- **Spore Bomb**, **Marov Stew**, **Mortar and Pestle** *(new: grinds russulas and other
+  mushrooms into dye)*, **Cordyceps** *(new)*, **Death Cap Hat** *(new)*.
+- Every item explains its ability in its tooltip (English and Russian).
 
 ### Installation
 1. Install [NeoForge](https://neoforged.net/) for Minecraft **1.21.1**.
@@ -75,7 +89,16 @@ NeoForge • Minecraft 1.21.1 • Java 21 • [Download](../../releases/latest)
 ## Русский
 
 Мод про грибы со способностями в духе Alex's Mobs: грибы растут по всему миру и дают
-эффекты, а некоторые из них ходят сами.
+эффекты, многие из них ходят сами, а в тёмном лесу живёт босс.
+
+### Что нового в 0.2.0
+- **Босс бледная поганка** в тёмном лесу и её шляпа-шлем.
+- **Новые мобы:** сыроежка, гриб-шахтёр, ходячий гриб-зонтик, лисичка, FlynnFlyTaggart, зомби
+  с кордицепсом.
+- **Новые грибы:** лисичка и гриб-зонтик, который вырастает в огромный зонтик с тенью.
+- **Грибница** за пределами грибных островов и **оживающие грядки**.
+- **Ступка с пестиком**: красители из сыроежек и других грибов.
+- Редкий **смайлик** у мухоморыча.
 
 ### Грибы
 Все грибы медленно расползаются сами, от костной муки рядом вырастает ещё один.
@@ -177,14 +200,17 @@ NeoForge • Minecraft 1.21.1 • Java 21 • [Download](../../releases/latest)
 1. Открой `art/marovgribs.blend`. Каждый моб — пустышка-корень, под ней пустышки-кости
    (`hopling:cap` и т. п., точка пустышки — шарнир), под костями кубы.
 2. Двигай и масштабируй кубы, двигай и вращай кости. Цвета и раскраска — в Object Properties →
-   Custom Properties (`col`, `col2`, `paint`, `face`).
+   Custom Properties у куба (`col`, `col2`, `paint`, `face`, `glow` — светится в темноте) и у
+   корня моба (`variants` — запасные текстуры с другим лицом, как смайлик мухоморыча;
+   `tint_parts` — части, которые игра красит в цвет моба, как шляпка сыроежки).
 3. Сохрани и экспортируй:
 
 ```
 blender -b art/marovgribs.blend --python art/gribs_art.py -- export
 ```
 
-Экспорт сам раскладывает развёртку, рисует текстуры мобов, комочки облаков и иконку, пишет
+Экспорт сам раскладывает развёртку, рисует текстуры мобов (и их свечение и варианты), блоки
+грибницы и зонтика, комочки облаков, шлем поганки и иконку, пишет
 Java-классы геометрии в `client/model/geo` и обновляет превью в `art/previews`. Классы в `geo`
 руками не правь: они перезаписываются. Анимации живут в `client/model/*Model.java`. Спрайты
 грибов 16×16 описаны в скрипте (словарь `SPRITES`, по символу на пиксель).
