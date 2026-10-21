@@ -432,6 +432,39 @@ def puff_sheet():
     return tex
 
 
+def mod_icon():
+    """Иконка мода 128x128 (README и список модов): мухомор (спрайт x3) в круглой эмблеме, сетка 64x64 по 2 пикселя."""
+    grid, cell = 64, 2
+    bg, inner, outer = rgba("1F2A1E"), rgba("355A30"), rgba("2B4727")
+    ring, ring_dark = rgba("C9A35E"), rgba("7A5E36")
+    small = Tex(grid, grid)
+    c = (grid - 1) / 2
+    for y in range(grid):
+        for x in range(grid):
+            d = math.hypot(x - c, y - c)
+            if d <= 22.5:
+                small.set(x, y, inner)
+            elif d <= 26.5:
+                small.set(x, y, outer)
+            elif d <= 29.0:
+                small.set(x, y, ring)
+            elif d <= 30.6:
+                small.set(x, y, ring_dark)
+            else:
+                small.set(x, y, bg)
+    sprite = sprite_tex("block/fly_agaric")
+    for y in range(48):
+        for x in range(48):
+            p = sprite.px[y // 3][x // 3]
+            if p[3]:
+                small.set(x + 8, y + 2, p)
+    icon = Tex(grid * cell, grid * cell)
+    for y in range(icon.h):
+        for x in range(icon.w):
+            icon.px[y][x] = small.px[y // cell][x // cell]
+    return icon
+
+
 def tinted(tex, color, alpha=0.9):
     out = Tex(tex.w, tex.h)
     tint = rgba(color)
@@ -871,6 +904,7 @@ def export():
     for key in SPRITES:
         sprite_tex(key).save(os.path.join(ASSETS, "textures", key + ".png"))
     puff_sheet().save(os.path.join(ASSETS, "textures", "entity", "spore_puff.png"))
+    mod_icon().save(os.path.join(ASSETS, "icon.png"))
     build_cloud_previews(os.path.join(ASSETS, "textures", "entity", "spore_puff.png"))
 
     roots = [o for o in scene.objects if "geo_class" in o]
