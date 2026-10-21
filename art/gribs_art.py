@@ -688,6 +688,13 @@ def setup_render(scene):
         scene.cycles.samples = 48
     scene.view_settings.view_transform = "Standard"
     scene.render.film_transparent = False
+    # Blender пишет в PNG метаданные (путь к .blend, дату, имя компьютера) — превью лежат в публичном репо.
+    for attr in dir(scene.render):
+        if attr.startswith("use_stamp"):
+            try:
+                setattr(scene.render, attr, False)
+            except (AttributeError, TypeError):
+                pass
     scene.render.image_settings.file_format = "PNG"
     world = scene.world or bpy.data.worlds.new("World")
     scene.world = world
@@ -894,6 +901,16 @@ def write_geo(root, parts, tex_w, tex_h, uvs):
     return cls
 
 
+def save_blend(scene):
+    """Сохраняет только сцену и всё, на что она ссылается, с относительными путями.
+
+    Обычное «Сохранить как» кладёт в файл и окно Blender с параметрами последних операций
+    (там всплывает папка C:\\Users\\<имя>\\Documents), а .blend лежит в публичном репозитории.
+    """
+    scene.render.filepath = "//previews/"
+    bpy.data.libraries.write(BLEND, set(bpy.data.scenes), path_remap="RELATIVE_ALL", compress=True)
+
+
 def export():
     scene = bpy.context.scene
     bpy.context.view_layer.update()  # иначе matrix_world у только что созданных объектов ещё не посчитаны
@@ -959,11 +976,7 @@ def export():
     render_to(os.path.join(PREVIEWS, "all.png"), Vector((-0.15, -1.1, 0.45)), 6.2, (1280, 800))
     render_to(os.path.join(PREVIEWS, "spore_clouds.png"), Vector((27.5, 0, 1.3)), 25.0, (1280, 560))
 
-    try:
-        bpy.ops.file.make_paths_relative()
-    except RuntimeError:
-        pass
-    bpy.ops.wm.save_as_mainfile(filepath=BLEND)
+    save_blend(scene)
     print("\n".join(["", "Marov Gribs: экспорт готов"] + report))
 
 
