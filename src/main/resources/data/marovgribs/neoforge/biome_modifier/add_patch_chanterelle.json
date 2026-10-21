@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#marovgribs:has_chanterelle",
+  "features": "marovgribs:patch_chanterelle",
+  "step": "vegetal_decoration"
+}

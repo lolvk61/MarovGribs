@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#marovgribs:spawns_death_cap",
+  "spawners": {
+    "type": "marovgribs:death_cap",
+    "weight": 1,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

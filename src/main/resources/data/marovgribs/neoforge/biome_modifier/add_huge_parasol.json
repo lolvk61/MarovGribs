@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#marovgribs:has_parasol",
+  "features": "marovgribs:huge_parasol",
+  "step": "vegetal_decoration"
+}

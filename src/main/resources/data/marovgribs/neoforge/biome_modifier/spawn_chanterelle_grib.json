@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#marovgribs:has_chanterelle",
+  "spawners": {
+    "type": "marovgribs:chanterelle_grib",
+    "weight": 8,
+    "minCount": 2,
+    "maxCount": 3
+  }
+}

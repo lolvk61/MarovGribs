@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#marovgribs:has_marov_mycelium",
+  "features": "marovgribs:marov_mycelium_disk",
+  "step": "top_layer_modification"
+}

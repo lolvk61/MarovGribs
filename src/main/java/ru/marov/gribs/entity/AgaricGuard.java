@@ -2,6 +2,14 @@ package ru.marov.gribs.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.level.ServerLevelAccessor;
+import org.jetbrains.annotations.Nullable;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
@@ -36,10 +44,49 @@ import org.joml.Vector3f;
  */
 public class AgaricGuard extends PathfinderMob {
     public static final double GUARD_RADIUS = 16.0;
+    /** One guard in this many is born with a smiley face instead of the grumpy one. */
+    public static final int SMILEY_ODDS = 200;
     private static final DustParticleOptions ANGRY_DUST = new DustParticleOptions(new Vector3f(0.85F, 0.15F, 0.12F), 1.0F);
+    private static final EntityDataAccessor<Boolean> DATA_SMILEY = SynchedEntityData.defineId(AgaricGuard.class, EntityDataSerializers.BOOLEAN);
 
     public AgaricGuard(EntityType<? extends AgaricGuard> type, Level level) {
         super(type, level);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_SMILEY, false);
+    }
+
+    public boolean isSmiley() {
+        return entityData.get(DATA_SMILEY);
+    }
+
+    public void setSmiley(boolean smiley) {
+        entityData.set(DATA_SMILEY, smiley);
+    }
+
+    /** NeoForge marks finalizeSpawn override-only, hence the deprecation. */
+    @Nullable
+    @Override
+    @SuppressWarnings("deprecation")
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType,
+                                        @Nullable SpawnGroupData spawnGroupData) {
+        setSmiley(level.getRandom().nextInt(SMILEY_ODDS) == 0);
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean("Smiley", isSmiley());
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        setSmiley(tag.getBoolean("Smiley"));
     }
 
     public static AttributeSupplier.Builder createAttributes() {

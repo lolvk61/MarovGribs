@@ -5,12 +5,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import ru.marov.gribs.registry.ModEntities;
+import ru.marov.gribs.registry.ModItems;
 
 /** Spawns spore clouds for the puffball block, the Puffer and the spore bomb. */
 public final class SporeClouds {
@@ -24,8 +26,10 @@ public final class SporeClouds {
     private SporeClouds() {
     }
 
+    /** Puffers, the death cap, and anyone wearing the death cap's hat shrug spore clouds off. */
     public static boolean isSporeImmune(LivingEntity entity) {
-        return entity instanceof Puffer;
+        return entity instanceof Puffer || entity instanceof DeathCap
+                || entity.getItemBySlot(EquipmentSlot.HEAD).is(ModItems.DEATH_CAP_HAT.get());
     }
 
     public static SporeCloud spawn(Level level, Vec3 at, float radius, int durationTicks, int color,

@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#marovgribs:spawns_russula",
+  "spawners": {
+    "type": "marovgribs:russula",
+    "weight": 8,
+    "minCount": 2,
+    "maxCount": 4
+  }
+}

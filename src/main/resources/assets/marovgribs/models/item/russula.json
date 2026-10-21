@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "marovgribs:item/russula_cap",
+    "layer1": "marovgribs:item/russula_stem"
+  }
+}

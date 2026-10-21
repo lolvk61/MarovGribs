@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "marovgribs:blocks/chanterelle",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "marovgribs:chanterelle"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ]
+}

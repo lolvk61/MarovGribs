@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#marovgribs:spawns_miner_grib",
+  "spawners": {
+    "type": "marovgribs:miner_grib",
+    "weight": 8,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

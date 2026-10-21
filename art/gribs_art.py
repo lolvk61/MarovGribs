@@ -21,6 +21,7 @@
   src/main/java/ru/marov/gribs/client/model/geo/<Моб>Geo.java
   art/previews/*.png
 """
+import json
 import math
 import os
 import random
@@ -46,8 +47,10 @@ PX = 1.0 / 16.0
 # part: (имя, родитель, шарнир, поворот в градусах (x, y, z), кубы)
 # ---------------------------------------------------------------------------
 
-def cube(origin, size, paint, col, col2="", face="", gill=""):
-    return {"origin": origin, "size": size, "paint": paint, "col": col, "col2": col2, "face": face, "gill": gill}
+def cube(origin, size, paint, col, col2="", face="", gill="", glow=False):
+    """glow=True: куб светится в темноте (рисуется ещё и в <моб>_glow.png)."""
+    return {"origin": origin, "size": size, "paint": paint, "col": col, "col2": col2, "face": face, "gill": gill,
+            "glow": glow}
 
 
 BALL, BALL_DOTS = "EDE6CF", "A68F62"
@@ -83,7 +86,8 @@ MOBS = [
             cube((-1.5, 0, -1.5), (3, 3, 3), "leg", "CFC4A2"),
         ]),
     ]},
-    {"name": "agaric_guard", "geo_class": "AgaricGuardGeo", "x": 1.5, "parts": [
+    # variants: дополнительные текстуры, где одно лицо заменено другим (агрессивная морда -> смайлик).
+    {"name": "agaric_guard", "geo_class": "AgaricGuardGeo", "x": 1.5, "variants": {"smiley": {"grumpy": "smiley"}}, "parts": [
         ("body", None, (0, 18, 0), (0, 0, 0), [
             cube((-3.5, -9, -3), (7, 9, 6), "stem", "F1ECDD", face="grumpy"),
             cube((-4, -9, -3.5), (8, 1, 7), "skirt", "FFFFFF"),
@@ -107,7 +111,113 @@ MOBS = [
     ]},
 ]
 
-# Лица рисуются на передней грани куба: (первая строка, сетка). k глаз, b бровь, m рот, p румянец, w блик.
+LEG = "E6E0CE"
+MOBS += [
+    # tint_parts: части, которые игра красит в цвет моба (шляпка сыроежки рисуется серой).
+    {"name": "russula", "geo_class": "RussulaGeo", "x": -1.7, "y": 1.9, "tint_parts": ["cap"], "preview_tint": "D23A3A",
+     "parts": [
+         ("body", None, (0, 21, 0), (0, 0, 0), [
+             cube((-3.5, -8, -3.5), (7, 8, 7), "stem", "F3EFE2", face="sweet"),
+         ]),
+         ("cap", "body", (0, -8, 0), (0, 0, 0), [
+             cube((-6, -3, -6), (12, 3, 12), "cap_smooth", "DADADA", gill="F6F6F6"),
+             cube((-5, -4, -5), (10, 1, 10), "cap_smooth", "DADADA"),
+         ]),
+         ("right_front_leg", None, (-2, 21, -2), (0, 0, 0), [cube((-1, 0, -1), (2, 3, 2), "leg", LEG)]),
+         ("left_front_leg", None, (2, 21, -2), (0, 0, 0), [cube((-1, 0, -1), (2, 3, 2), "leg", LEG)]),
+         ("right_hind_leg", None, (-2, 21, 2), (0, 0, 0), [cube((-1, 0, -1), (2, 3, 2), "leg", LEG)]),
+         ("left_hind_leg", None, (2, 21, 2), (0, 0, 0), [cube((-1, 0, -1), (2, 3, 2), "leg", LEG)]),
+     ]},
+    {"name": "miner_grib", "geo_class": "MinerGribGeo", "x": -0.2, "y": 1.9, "parts": [
+        ("body", None, (0, 20, 0), (0, 0, 0), [
+            cube((-3, -7, -2.5), (6, 7, 5), "stem", "E9DFC8", face="miner"),
+            cube((-2.5, -6, 2.5), (5, 5, 2), "plain", "7A5233"),          # рюкзак для руды
+        ]),
+        ("cap", "body", (0, -7, 0), (0, 0, 0), [
+            cube((-4.5, -3, -4.5), (9, 3, 9), "cap", "9A6A45", "B98A62", gill="D9C7A8"),
+            cube((-2.5, -5, -2.5), (5, 2, 5), "plain", "E8B923"),         # каска
+            cube((-1, -5, -3.5), (2, 2, 1), "plain", "FFF3A0", glow=True),  # фонарь
+        ]),
+        ("right_arm", None, (-4, 15, 0), (0, 0, 0), [
+            cube((-1, -1, -1), (2, 5, 2), "leg", "E1D6BE"),
+            cube((-0.5, 3, -6), (1, 1, 5), "plain", "8B5A2B"),            # рукоять кирки
+            cube((-0.5, 1, -7), (1, 5, 1), "plain", "9EA3A8"),            # головка кирки
+        ]),
+        ("left_arm", None, (4, 15, 0), (0, 0, 0), [cube((-1, -1, -1), (2, 5, 2), "leg", "E1D6BE")]),
+        ("right_leg", None, (-1.5, 20, 0), (0, 0, 0), [cube((-1, 0, -1), (2, 4, 2), "leg", "D8CCB2")]),
+        ("left_leg", None, (1.5, 20, 0), (0, 0, 0), [cube((-1, 0, -1), (2, 4, 2), "leg", "D8CCB2")]),
+    ]},
+    # Босс рисуется в игре в 1.4 раза крупнее модели (scale).
+    {"name": "death_cap", "geo_class": "DeathCapGeo", "x": 1.9, "y": 2.3, "scale": 1.4, "parts": [
+        ("volva", None, (0, 24, 0), (0, 0, 0), [cube((-6, -4, -6), (12, 4, 12), "skirt", "E3E0CC")]),
+        ("body", None, (0, 20, 0), (0, 0, 0), [
+            cube((-4, -18, -4), (8, 18, 8), "stem", "EDEBDD", face="boss"),
+            cube((-5, -8, -5), (10, 2, 10), "skirt", "F7F5EC"),
+        ]),
+        ("cap", "body", (0, -18, 0), (0, 0, 0), [
+            cube((-10, -6, -10), (20, 6, 20), "cap", "C2CC98", "AEB97F", gill="F4F2E6"),
+            cube((-8, -9, -8), (16, 3, 16), "cap_top", "C9D2A2", "B3BE86"),
+            cube((-5, -11, -5), (10, 2, 10), "cap_top", "D0D8AC", "BAC48E"),
+        ]),
+        ("right_arm", None, (-5, 7, 0), (0, 0, 0), [cube((-1, 0, -1), (2, 13, 2), "leg", "DCD8C4")]),
+        ("left_arm", None, (5, 7, 0), (0, 0, 0), [cube((-1, 0, -1), (2, 13, 2), "leg", "DCD8C4")]),
+        ("root_front", None, (0, 23, -6), (0, 0, 0), [cube((-1, -1, -5), (2, 2, 5), "leg", "CFCAB2")]),
+        ("root_back", None, (0, 23, 6), (0, 0, 0), [cube((-1, -1, 0), (2, 2, 5), "leg", "CFCAB2")]),
+        ("root_right", None, (-6, 23, 0), (0, 0, 0), [cube((-5, -1, -1), (5, 2, 2), "leg", "CFCAB2")]),
+        ("root_left", None, (6, 23, 0), (0, 0, 0), [cube((0, -1, -1), (5, 2, 2), "leg", "CFCAB2")]),
+    ]},
+    # Гриб-зонтик: модель в половину размера, игра рисует её вдвое крупнее (около 4.6 блока).
+    {"name": "parasol_grib", "geo_class": "ParasolGribGeo", "x": 4.6, "y": 3.2, "scale": 2.0, "parts": [
+        ("body", None, (0, 21, 0), (0, 0, 0), [
+            cube((-2, -28, -2), (4, 28, 4), "snake", "EFE6D2", "B08A63", face="cute"),
+            cube((-3, -22, -3), (6, 1, 6), "skirt", "F4EEDF"),
+        ]),
+        ("cap", "body", (0, -28, 0), (0, 0, 0), [
+            cube((-14, -2, -14), (28, 2, 28), "cap", "E2D3B5", "8C5E3C", gill="F1E9D8"),
+            cube((-10, -4, -10), (20, 2, 20), "cap_top", "D9C7A2", "8C5E3C"),
+            cube((-3, -6, -3), (6, 2, 6), "cap_top", "8C5E3C", "6E4528"),
+        ]),
+        ("right_leg", None, (-1.5, 21, 0), (0, 0, 0), [cube((-1.5, 0, -1.5), (3, 3, 3), "leg", "D8CCB2")]),
+        ("left_leg", None, (1.5, 21, 0), (0, 0, 0), [cube((-1.5, 0, -1.5), (3, 3, 3), "leg", "D8CCB2")]),
+    ]},
+    # Лисичка: оранжевая воронка на ножке и лисий хвост с белым кончиком, задранный вверх.
+    {"name": "chanterelle_grib", "geo_class": "ChanterelleGribGeo", "x": -2.7, "y": 0.0, "parts": [
+        ("body", None, (0, 22, 0), (0, 0, 0), [
+            cube((-2, -6, -2), (4, 6, 4), "stem", "F0A83C", face="cute"),
+            cube((-3, -8, -3), (6, 2, 6), "plain", "E39A2E"),
+        ]),
+        ("cap", "body", (0, -8, 0), (0, 0, 0), [
+            cube((-4, -2, -4), (8, 2, 8), "cap_smooth", "F2A93B", gill="E39A2E"),
+        ]),
+        ("tail", "body", (0, -2, 2), (25, 0, 0), [
+            cube((-1.5, -1.5, 0), (3, 3, 7), "plain", "E07B2A"),
+            cube((-1.5, -1.5, 7), (3, 3, 3), "plain", "FFFFFF"),
+        ]),
+        ("right_leg", None, (-1, 22, 0), (0, 0, 0), [cube((-1, 0, -1), (2, 2, 2), "leg", "D98A24")]),
+        ("left_leg", None, (1, 22, 0), (0, 0, 0), [cube((-1, 0, -1), (2, 2, 2), "leg", "D98A24")]),
+    ]},
+    # Слои поверх ванильных мобов: каска на голову лисы FlynnFlyTaggart и кордицепс на голову зомби.
+    # Координаты — относительно головы; игра сдвигает модель на 24 пикселя вверх.
+    {"name": "flynn_helmet", "geo_class": "FlynnHelmetGeo", "x": -8.0, "preview": False, "parts": [
+        ("helmet", None, (0, 24, 0), (0, 0, 0), [
+            cube((-3.5, -2.5, -5.5), (9, 3, 7), "plain", "4E6B3A"),
+            cube((-2, -1, -6), (6, 2, 1), "plain", "D9822B"),
+            cube((0.5, -3.5, -4.5), (1, 1, 5), "plain", "3E5A2E"),
+        ]),
+    ]},
+    {"name": "cordyceps_growth", "geo_class": "CordycepsGeo", "x": -9.0, "preview": False, "parts": [
+        ("growth", None, (0, 24, 0), (0, 0, 0), [
+            cube((-4.5, -8.5, -4.5), (9, 1, 9), "plain", "E7C9A0"),
+            cube((-3, -12, -2), (1, 4, 1), "plain", "B8742E"), cube((-3.5, -14, -2.5), (2, 2, 2), "plain", "F08A24"),
+            cube((1, -13, 0), (1, 5, 1), "plain", "B8742E"), cube((0.5, -15, -0.5), (2, 2, 2), "plain", "F08A24"),
+            cube((-1, -11, 2), (1, 3, 1), "plain", "B8742E"), cube((-1.5, -13, 1.5), (2, 2, 2), "plain", "F08A24"),
+            cube((3, -11, -3), (1, 3, 1), "plain", "B8742E"), cube((2.5, -13, -3.5), (2, 2, 2), "plain", "F08A24"),
+        ]),
+    ]},
+]
+
+# Лица рисуются на передней грани куба: (первая строка, сетка). k глаз, b бровь, m рот, p румянец, w блик,
+# g — светящийся глаз (попадает и в текстуру свечения).
 FACES = {
     "cute": (1, ["k..k",
                  "p..p",
@@ -125,8 +235,30 @@ FACES = {
                    ".......",
                    "..mmm..",
                    ".m...m."]),
+    "smiley": (2, [".......",
+                   "..k.k..",
+                   "..k.k..",
+                   ".p...p.",
+                   ".m...m.",
+                   "..mmm.."]),
+    "sweet": (2, ["..k.k..",
+                  ".pk.kp.",
+                  "...m..."]),
+    "miner": (2, [".k..k.",
+                  "......",
+                  ".bbbb.",
+                  "..mm.."]),
+    "boss": (2, ["b......b",
+                 ".bb..bb.",
+                 ".gg..gg.",
+                 ".gg..gg.",
+                 "........",
+                 "mmmmmmmm",
+                 "mwmwwmwm",
+                 ".mmmmmm."]),
 }
-FACE_COLORS = {"k": "1E1A16", "b": "3A2A1E", "m": "6A3428", "p": "F2A1A1", "w": "FFFFFF"}
+FACE_COLORS = {"k": "1E1A16", "b": "3A2A1E", "m": "6A3428", "p": "F2A1A1", "w": "FFFFFF", "g": "B8FF6A"}
+GLOW_CHARS = {"g"}
 
 # ---------------------------------------------------------------------------
 # Спрайты 16x16 для блоков и предметов. "." прозрачный.
@@ -225,7 +357,111 @@ SPRITES = {
         EMPTY,
     ]),
 }
-PLANT_SPRITES = ["block/hopcap", "block/glowcap", "block/puffball", "block/fly_agaric"]
+SPRITES.update({
+    # Лисичка: оранжевая воронка и лисий хвост с белым кончиком.
+    "block/chanterelle": ({"k": "7A3E12", "O": "F2A93B", "o": "D98A24", "Y": "FFD27A", "T": "E06A1E", "t": "B9541A",
+                           "W": "FFFFFF", "w": "E6E6E6"}, [
+        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+        "..kkkkkkk.......",
+        ".kYOOOYOOk......",
+        ".kOOYOOOOk..WW..",
+        "..koooook..WWWw.",
+        "...koook..TWWw..",
+        "....oOo..TTW....",
+        "....oOo.TTt.....",
+        "....oOo.TTt.....",
+        "....oOo..Tt.....",
+        "....oOoTTt......",
+        "...ooOooTt......",
+    ]),
+    # Росток гриба-зонтика: «барабанная палочка» и маленький раскрытый зонтик.
+    "block/parasol_sprout": ({"k": "4A3220", "B": "8C5E3C", "b": "6E4528", "C": "E9DCC3", "c": "CDBB9A",
+                              "S": "EFE6D2", "s": "B89B74"}, [
+        EMPTY, EMPTY,
+        "......kk........",
+        ".....kBBk.......",
+        "....kBbCBk......",
+        "....kCBbCk......",
+        "....kBCCBk......",
+        ".....kcck.......",
+        "......Ss........",
+        "......sS..kBBk..",
+        "......Ss.kBCCBk.",
+        "......Ss..kcck..",
+        "......sS...Ss...",
+        "......Ss...sS...",
+        ".....SSss..Ss...",
+        ".....sSSs.sSSs..",
+    ]),
+    # Сыроежка-предмет в два слоя: шляпка серая (её красит игра), ножка своего цвета.
+    "item/russula_cap": ({"k": "5A5A5A", "G": "D8D8D8", "g": "B8B8B8", "H": "F2F2F2", "L": "EDEDED"}, [
+        EMPTY, EMPTY, EMPTY, EMPTY,
+        "....kkkkkkk.....",
+        "..kkGHHGGGGkk...",
+        ".kGGHGGGgGGGGk..",
+        ".kGGGGGGGGGGGk..",
+        ".kgggggggggggk..",
+        "..kLLLLLLLLLk...",
+        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+    ]),
+    "item/russula_stem": ({"S": "F3EFE2", "s": "D6CFBC"}, [
+        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+        ".....SSSS.......",
+        ".....SSSs.......",
+        ".....SSSs.......",
+        ".....SSSs.......",
+        "....SSSSSs......",
+        "....sSSSss......",
+    ]),
+    "item/mortar": ({"k": "3C3C3C", "G": "9A9A9A", "g": "7A7A7A", "H": "B8B8B8", "W": "A0703F", "w": "7A5230"}, [
+        EMPTY, EMPTY,
+        "..........ww....",
+        ".........wWw....",
+        "........wWw.....",
+        ".......wWw......",
+        "......wWw.......",
+        "..kkkkWwkkkkk...",
+        ".kHHGGGGGGGGGk..",
+        ".kGGGGGGGGGGgk..",
+        "..kGGGGGGGGgk...",
+        "...kgGGGGGgk....",
+        "....kkgggkk.....",
+        "...kGGGGGGGk....",
+        "...kkkkkkkkk....",
+        EMPTY,
+    ]),
+    "item/cordyceps": ({"k": "6B3A12", "O": "F08A24", "o": "C46A1A", "s": "B8742E", "B": "E7C9A0"}, [
+        EMPTY, EMPTY,
+        "....kk....kk....",
+        "...kOOk..kOOk...",
+        "...kOok..kOok...",
+        "....ks....sk....",
+        "....s..kk..s....",
+        "....s.kOOk.s....",
+        "....s.kOok.s....",
+        "....s..ks..s....",
+        "....s...s..s....",
+        ".....s..s.s.....",
+        "......s.s.s.....",
+        "....BBBBBBBB....",
+        "...BBBBBBBBBB...",
+        EMPTY,
+    ]),
+    "item/death_cap_hat": ({"k": "5E6640", "C": "C2CC98", "c": "AEB97F", "H": "DDE5B8", "G": "F4F2E6"}, [
+        EMPTY, EMPTY, EMPTY, EMPTY,
+        ".....kkkkkk.....",
+        "...kkHHCCCCkk...",
+        "..kHHCCcCCCCCk..",
+        ".kHCCCCCCcCCCCk.",
+        ".kCCcCCCCCCCcCk.",
+        "kCCCCCCCCCCCCCCk",
+        "kGGGGGGGGGGGGGGk",
+        ".kkkkkkkkkkkkkk.",
+        EMPTY, EMPTY, EMPTY, EMPTY,
+    ]),
+})
+PLANT_SPRITES = ["block/hopcap", "block/glowcap", "block/puffball", "block/fly_agaric", "block/chanterelle",
+                 "block/parasol_sprout"]
 
 # Облака спор: цвета как в SporeClouds.java, радиусы как в игре.
 CLOUDS = [("puffball", "E6DCC0", 2.5), ("puffer", "B5C46E", 3.0), ("spore_bomb", "BDB6A8", 3.0)]
@@ -323,7 +559,7 @@ def scatter_spots(tex, rect, color, rng, density, max_size, avoid_last_row=False
                 tex.set(x0 + sx + xx, y0 + sy + yy, mul(color, 1 + rng.uniform(-0.03, 0.03)))
 
 
-def paint_cube(tex, uv, size, props, rng):
+def paint_cube(tex, uv, size, props, rng, glow_tex=None):
     w, h, d = size
     rects = box_rects(uv[0], uv[1], w, h, d)
     col = rgba(props["col"])
@@ -333,16 +569,28 @@ def paint_cube(tex, uv, size, props, rng):
     def noise(c, a=0.05):
         return mul(c, 1 + rng.uniform(-a, a))
 
-    if paint in ("cap", "cap_top"):
+    if paint in ("cap", "cap_top", "cap_smooth"):
         for f in SIDES:
             fh = rects[f][3]
             tex.fill(rects[f], lambda x, y: noise(mul(col, 0.78) if y == fh - 1 and fh > 1 else col))
             if col2:
                 scatter_spots(tex, rects[f], col2, rng, 1 / 9, 2 if fh >= 3 else 1, avoid_last_row=True)
-        tex.fill(rects["top"], lambda x, y: noise(col))
+        if paint == "cap_smooth":
+            # Гладкая шляпка сыроежки: к середине чуть темнее (там ямка), по краю светлый блик.
+            _, _, fw, fh = rects["top"]
+            cx, cy = (fw - 1) / 2, (fh - 1) / 2
+            rmax = max(cx, cy) or 1
+
+            def smooth(x, y):
+                r = max(abs(x - cx), abs(y - cy)) / rmax
+                return noise(mul(col, 0.86 + 0.14 * r + (0.06 if x + y < 3 else 0)), 0.02)
+
+            tex.fill(rects["top"], smooth)
+        else:
+            tex.fill(rects["top"], lambda x, y: noise(col))
         if col2:
             scatter_spots(tex, rects["top"], col2, rng, 1 / 7, 2)
-        if paint == "cap":
+        if paint == "cap" or (paint == "cap_smooth" and props.get("gill")):
             gill = rgba(props.get("gill") or "E8DEC0")
             _, _, fw, fh = rects["bottom"]
             cx, cy = (fw - 1) / 2, (fh - 1) / 2
@@ -390,6 +638,20 @@ def paint_cube(tex, uv, size, props, rng):
         tex.fill(rects["top"], lambda x, y: noise(mul(col, 0.9), 0.02))
         tex.fill(rects["bottom"], lambda x, y: noise(mul(col, 0.82), 0.02))
 
+    elif paint == "snake":
+        # Ножка гриба-зонтика: светлая, с прерывистыми коричневыми полосами «змеиной кожи» (col2).
+        band_col = col2 or mul(col, 0.7)
+        for f in SIDES:
+            tex.fill(rects[f], lambda x, y: noise(band_col if (y + (x // 2) % 2) % 5 == 0 else col, 0.04))
+        tex.fill(rects["top"], lambda x, y: noise(mul(col, 0.92), 0.03))
+        tex.fill(rects["bottom"], lambda x, y: noise(mul(col, 0.78), 0.03))
+
+    elif paint == "plain":
+        for f in SIDES:
+            tex.fill(rects[f], lambda x, y: noise(col, 0.04))
+        tex.fill(rects["top"], lambda x, y: noise(mul(col, 1.06), 0.04))
+        tex.fill(rects["bottom"], lambda x, y: noise(mul(col, 0.8), 0.04))
+
     else:
         raise ValueError(f"неизвестный paint: {paint}")
 
@@ -402,6 +664,8 @@ def paint_cube(tex, uv, size, props, rng):
             for gx, ch in enumerate(row):
                 if ch != ".":
                     tex.set(x0 + off + gx, y0 + first_row + gy, rgba(FACE_COLORS[ch]))
+                    if glow_tex is not None and ch in GLOW_CHARS:
+                        glow_tex.set(x0 + off + gx, y0 + first_row + gy, rgba(FACE_COLORS[ch]))
 
 
 def puff_sheet():
@@ -463,6 +727,105 @@ def mod_icon():
         for x in range(icon.w):
             icon.px[y][x] = small.px[y // cell][x // cell]
     return icon
+
+
+def noise_fill(tex, color, rng, amount=0.08):
+    for y in range(tex.h):
+        for x in range(tex.w):
+            tex.set(x, y, mul(rgba(color), 1 + rng.uniform(-amount, amount)))
+
+
+def block_textures():
+    """Полноразмерные блоки 16x16: грибница и гриб-зонтик."""
+    out = {}
+    rng = random.Random("mycelium")
+    # Грибница: тёмная лесная земля, по ней белая паутина гиф.
+    top = Tex(16, 16)
+    noise_fill(top, "5B4636", rng, 0.12)
+    steps = [(1, 0), (0, 1), (1, 1), (-1, 1), (1, -1), (-1, 0), (0, -1)]
+    for _ in range(7):
+        x, y = rng.randrange(16), rng.randrange(16)
+        for _ in range(rng.randint(6, 11)):
+            top.set(x % 16, y % 16, mul(rgba("E8E2D0"), 1 + rng.uniform(-0.08, 0.05)))
+            dx, dy = rng.choice(steps)
+            x, y = x + dx, y + dy
+    for _ in range(5):
+        top.set(rng.randrange(16), rng.randrange(16), rgba("FFFBEF"))
+    out["block/marov_mycelium_top"] = top
+
+    side = Tex(16, 16)
+    for y in range(16):
+        for x in range(16):
+            r = rng.random()
+            c = "866043" if r < 0.7 else ("6C4C34" if r < 0.88 else "A07A55")
+            side.set(x, y, mul(rgba(c), 1 + rng.uniform(-0.05, 0.05)))
+    for x in range(16):
+        depth = 2 + rng.randint(0, 2)
+        for y in range(depth):
+            side.set(x, y, top.px[y][x])
+        if rng.random() < 0.35:  # свисающие нити
+            for y in range(depth, depth + rng.randint(1, 2)):
+                side.set(x, y, rgba("DCD5C2"))
+    out["block/marov_mycelium_side"] = side
+
+    rng = random.Random("parasol")
+    cap_top = Tex(16, 16)
+    noise_fill(cap_top, "E2D3B5", rng, 0.05)
+    for _ in range(14):  # коричневые чешуйки
+        x, y = rng.randrange(16), rng.randrange(16)
+        c = mul(rgba("8C5E3C"), 1 + rng.uniform(-0.1, 0.1))
+        cap_top.set(x, y, c)
+        cap_top.set((x + 1) % 16, y, c)
+        if rng.random() < 0.5:
+            cap_top.set(x, (y + 1) % 16, mul(c, 0.85))
+    out["block/parasol_cap_top"] = cap_top
+
+    cap_side = Tex(16, 16)
+    for y in range(16):
+        for x in range(16):
+            cap_side.set(x, y, mul(rgba("8C5E3C" if y < 5 else "E2D3B5"), 1 + rng.uniform(-0.06, 0.06)))
+    for x in range(16):  # рваный край коричневой полосы
+        for y in range(5, 5 + rng.randint(0, 3)):
+            cap_side.set(x, y, mul(rgba("A57650"), 1 + rng.uniform(-0.06, 0.06)))
+    for _ in range(8):
+        cap_side.set(rng.randrange(16), rng.randrange(8, 16), rgba("A57650"))
+    out["block/parasol_cap_side"] = cap_side
+
+    gills = Tex(16, 16)
+    for y in range(16):
+        for x in range(16):
+            gills.set(x, y, mul(rgba("F1E9D8" if x % 2 else "D9CDB4"), 1 + rng.uniform(-0.03, 0.03)))
+    out["block/parasol_cap_bottom"] = gills
+
+    stem = Tex(16, 16)
+    for y in range(16):
+        for x in range(16):
+            band = (y + (x // 4) % 2 * 2) % 6 == 0  # прерывистые полосы «змеиной кожи»
+            stem.set(x, y, mul(rgba("B08A63" if band else "EFE6D2"), 1 + rng.uniform(-0.05, 0.05)))
+    out["block/parasol_stem"] = stem
+
+    stem_top = Tex(16, 16)
+    for y in range(16):
+        for x in range(16):
+            r = max(abs(x - 7.5), abs(y - 7.5))
+            c = "D8C9AA" if r > 6.5 else ("EFE6D2" if int(r) % 3 else "E2D6BC")
+            stem_top.set(x, y, mul(rgba(c), 1 + rng.uniform(-0.04, 0.04)))
+    out["block/parasol_stem_top"] = stem_top
+    return out
+
+
+def death_cap_armor():
+    """Слой брони для шляпы поганки (64x32, как у всех шлемов): шляпка на голове, лицо открыто."""
+    tex = Tex(64, 32)
+    rng = random.Random("death_cap_hat")
+    rects = box_rects(0, 0, 8, 8, 8)
+    cap, cap2, rim = rgba("C2CC98"), rgba("AEB97F"), rgba("8E9A63")
+    tex.fill(rects["top"], lambda x, y: mul(cap2 if rng.random() < 0.15 else cap, 1 + rng.uniform(-0.05, 0.05)))
+    for f in SIDES:
+        x0, y0, fw, _ = rects[f]
+        rows = 5 if f == "south" else 3  # сзади шляпка спускается ниже
+        tex.fill((x0, y0, fw, rows), lambda x, y: rim if y == rows - 1 else mul(cap, 1 + rng.uniform(-0.05, 0.05)))
+    return tex
 
 
 def tinted(tex, color, alpha=0.9):
@@ -561,8 +924,13 @@ def build_scene():
         root = bpy.data.objects.new(mob["name"], None)
         root.empty_display_type = "ARROWS"
         root.empty_display_size = 0.3
-        root.location = (mob["x"], 0, 0)
+        root.location = (mob["x"], mob.get("y", 0), 0)
+        root.scale = (mob.get("scale", 1.0),) * 3  # только для превью: экспорт считает всё относительно корня
         root["geo_class"] = mob["geo_class"]
+        root["preview"] = mob.get("preview", True)
+        root["variants"] = json.dumps(mob.get("variants", {}), ensure_ascii=False)
+        root["tint_parts"] = json.dumps(mob.get("tint_parts", []))
+        root["preview_tint"] = mob.get("preview_tint", "")
         coll.objects.link(root)
         parts = {}
         for order, (pname, parent, pivot, rot, cubes) in enumerate(mob["parts"]):
@@ -583,6 +951,7 @@ def build_scene():
                 obj = bpy.data.objects.new(name, box_mesh(name, c["origin"], c["size"]))
                 for key in ("paint", "col", "col2", "face", "gill"):
                     obj[key] = c[key]
+                obj["glow"] = int(c["glow"])
                 obj["order"] = i
                 coll.objects.link(obj)
                 obj.parent = empty
@@ -590,7 +959,7 @@ def build_scene():
     plants = new_collection("plants")
     for i, key in enumerate(PLANT_SPRITES):
         name = key.split("/")[1]
-        x = -2.1 + i * 1.4
+        x = -3.0 + i * 1.2
         for k, angle in enumerate((45, -45)):
             mesh = bpy.data.meshes.new(f"plant:{name}:{k}")
             hw = 0.5
@@ -798,6 +1167,7 @@ def collect_mob(root):
             origin = (lo.x * 16, -hi.z * 16, lo.y * 16)
             size = tuple(max(1, round(s)) for s in ((hi.x - lo.x) * 16, (hi.z - lo.z) * 16, (hi.y - lo.y) * 16))
             props = {k: str(cobj.get(k, "")) for k in ("paint", "col", "col2", "face", "gill")}
+            props["glow"] = bool(cobj.get("glow", 0))
             cubes.append({"obj": cobj, "origin": origin, "size": size, "props": props, "lo": lo, "hi": hi, "part_inv": inv})
         name = str(obj["part"])
         parts.append({"name": name, "parent": parent_name, "pivot": pivot, "rot": rot, "cubes": cubes})
@@ -920,6 +1290,9 @@ def export():
 
     for key in SPRITES:
         sprite_tex(key).save(os.path.join(ASSETS, "textures", key + ".png"))
+    for key, tex in block_textures().items():
+        tex.save(os.path.join(ASSETS, "textures", key + ".png"))
+    death_cap_armor().save(os.path.join(ASSETS, "textures", "models", "armor", "death_cap_layer_1.png"))
     puff_sheet().save(os.path.join(ASSETS, "textures", "entity", "spore_puff.png"))
     mod_icon().save(os.path.join(ASSETS, "icon.png"))
     build_cloud_previews(os.path.join(ASSETS, "textures", "entity", "spore_puff.png"))
@@ -930,20 +1303,47 @@ def export():
         parts = collect_mob(root)
         cubes = [c for p in parts for c in p["cubes"]]
         tex_w, tex_h, pos = pack([(id(c), 2 * (c["size"][0] + c["size"][2]), c["size"][2] + c["size"][1]) for c in cubes])
-        tex = Tex(tex_w, tex_h)
-        for p in parts:
-            for i, c in enumerate(p["cubes"]):
-                rng = random.Random(f"{mob}/{p['name']}/{i}")
-                paint_cube(tex, pos[id(c)], c["size"], c["props"], rng)
+
+        def paint_all(face_swap=None, glow=None):
+            tex = Tex(tex_w, tex_h)
+            for p in parts:
+                for i, c in enumerate(p["cubes"]):
+                    props = dict(c["props"])
+                    if face_swap and props.get("face") in face_swap:
+                        props["face"] = face_swap[props["face"]]
+                    rng = random.Random(f"{mob}/{p['name']}/{i}")
+                    paint_cube(tex, pos[id(c)], c["size"], props, rng, glow)
+                    if glow is not None and props["glow"]:
+                        paint_cube(glow, pos[id(c)], c["size"], props, random.Random(f"{mob}/{p['name']}/{i}"))
+            return tex
+
+        glow = Tex(tex_w, tex_h)
+        tex = paint_all(glow=glow)
         png = os.path.join(ASSETS, "textures", "entity", mob + ".png")
         tex.save(png)
+        extra = []
+        if any(px[3] for row in glow.px for px in row):
+            glow.save(os.path.join(ASSETS, "textures", "entity", mob + "_glow.png"))
+            extra.append("свечение")
+        for variant, swap in json.loads(root.get("variants", "{}")).items():
+            paint_all(face_swap=swap).save(os.path.join(ASSETS, "textures", "entity", f"{mob}_{variant}.png"))
+            extra.append(variant)
+
         mat = texture_material("mob:" + mob, png)
-        for c in cubes:
-            assign_uvs(c, pos[id(c)], tex_w, tex_h)
-            c["obj"].data.materials.clear()
-            c["obj"].data.materials.append(mat)
+        tint_parts = set(json.loads(root.get("tint_parts", "[]")))
+        tint_mat = None
+        if tint_parts and root.get("preview_tint"):
+            tinted_png = os.path.join(ART, ".cache", f"{mob}_tinted.png")
+            tinted(tex, root["preview_tint"], alpha=1.0).save(tinted_png)
+            tint_mat = texture_material("mob:" + mob + ":tinted", tinted_png)
+        for p in parts:
+            for c in p["cubes"]:
+                assign_uvs(c, pos[id(c)], tex_w, tex_h)
+                c["obj"].data.materials.clear()
+                c["obj"].data.materials.append(tint_mat if tint_mat and p["name"] in tint_parts else mat)
         cls = write_geo(root, parts, tex_w, tex_h, pos)
-        report.append(f"{mob}: {len(parts)} частей, {len(cubes)} кубов, текстура {tex_w}x{tex_h} -> {cls}.java")
+        note = f" (+ {', '.join(extra)})" if extra else ""
+        report.append(f"{mob}: {len(parts)} частей, {len(cubes)} кубов, текстура {tex_w}x{tex_h}{note} -> {cls}.java")
 
     for obj in scene.objects:
         if "sprite" in obj:
@@ -954,7 +1354,11 @@ def export():
             obj.data.materials.append(mat)
 
     # Превью: каждый моб отдельно и общий снимок.
-    mob_objs = {r.name: [r] + list(r.children_recursive) for r in roots}
+    mob_objs = {r.name: [r] + list(r.children_recursive) for r in roots if r.get("preview", True)}
+    for r in roots:
+        if not r.get("preview", True):  # слои для ванильных мобов в превью не показываем
+            for o in [r] + list(r.children_recursive):
+                o.hide_render = True
     plant_objs = [o for o in scene.objects if "sprite" in o]
     for name, objs in mob_objs.items():
         for other, oo in mob_objs.items():
@@ -973,7 +1377,7 @@ def export():
             o.hide_render = False
     for o in plant_objs:
         o.hide_render = False
-    render_to(os.path.join(PREVIEWS, "all.png"), Vector((-0.15, -1.1, 0.45)), 6.2, (1280, 800))
+    render_to(os.path.join(PREVIEWS, "all.png"), Vector((0.9, 0.0, 1.6)), 10.6, (1280, 800))
     render_to(os.path.join(PREVIEWS, "spore_clouds.png"), Vector((27.5, 0, 1.3)), 25.0, (1280, 560))
 
     save_blend(scene)

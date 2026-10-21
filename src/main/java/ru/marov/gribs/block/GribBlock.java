@@ -14,13 +14,16 @@ import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import ru.marov.gribs.registry.ModBlocks;
 
 /**
- * Base mushroom plant: grows on dirt-like blocks, slowly spreads like vanilla mushrooms
- * and sprouts a neighbour when bone-mealed.
+ * Base mushroom plant: grows on dirt-like blocks, slowly spreads like vanilla mushrooms (five times
+ * faster on Marov mycelium), sprouts a neighbour when bone-mealed and wakes dense patches up.
  */
 public class GribBlock extends BushBlock implements BonemealableBlock {
     public static final MapCodec<GribBlock> CODEC = simpleCodec(GribBlock::new);
+    /** One random tick in this many tries to wake the patch up (see GribAwakening). */
+    public static final int AWAKEN_CHANCE = 16;
     private static final VoxelShape SHAPE = Block.box(5.0, 0.0, 5.0, 11.0, 7.0, 11.0);
 
     public GribBlock(Properties properties) {
@@ -44,7 +47,11 @@ public class GribBlock extends BushBlock implements BonemealableBlock {
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (random.nextInt(25) != 0) {
+        if (random.nextInt(AWAKEN_CHANCE) == 0 && GribAwakening.tryAwaken(level, pos, state) != null) {
+            return;
+        }
+        boolean onMycelium = level.getBlockState(pos.below()).is(ModBlocks.MAROV_MYCELIUM.get());
+        if (random.nextInt(onMycelium ? 5 : 25) != 0) {
             return;
         }
         int neighbours = 5;

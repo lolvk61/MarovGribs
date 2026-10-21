@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "marovgribs:block/marov_mycelium_top",
+    "side": "marovgribs:block/marov_mycelium_side",
+    "bottom": "minecraft:block/dirt"
+  }
+}

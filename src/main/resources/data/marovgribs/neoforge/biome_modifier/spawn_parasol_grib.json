@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#marovgribs:has_parasol",
+  "spawners": {
+    "type": "marovgribs:parasol_grib",
+    "weight": 2,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}
