@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#marovgribs:has_hopcap",
+  "features": "marovgribs:patch_hopcap",
+  "step": "vegetal_decoration"
+}

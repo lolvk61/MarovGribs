@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "puffed=false": {
+      "model": "marovgribs:block/puffball"
+    },
+    "puffed=true": {
+      "model": "marovgribs:block/puffball"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#marovgribs:spawns_hopling",
+  "spawners": {
+    "type": "marovgribs:hopling",
+    "weight": 10,
+    "minCount": 2,
+    "maxCount": 4
+  }
+}

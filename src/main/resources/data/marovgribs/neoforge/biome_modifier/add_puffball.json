@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#marovgribs:has_puffball",
+  "features": "marovgribs:patch_puffball",
+  "step": "vegetal_decoration"
+}

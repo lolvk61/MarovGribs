@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:bowl"
+    },
+    {
+      "item": "marovgribs:hopcap"
+    },
+    {
+      "item": "marovgribs:glowcap"
+    },
+    {
+      "item": "marovgribs:puffball"
+    },
+    {
+      "item": "marovgribs:fly_agaric"
+    }
+  ],
+  "result": {
+    "id": "marovgribs:marov_stew",
+    "count": 1
+  }
+}

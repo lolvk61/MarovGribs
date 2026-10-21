@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#marovgribs:has_glowcap",
+  "features": "marovgribs:patch_glowcap",
+  "step": "vegetal_decoration"
+}

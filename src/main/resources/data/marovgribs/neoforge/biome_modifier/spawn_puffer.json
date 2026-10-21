@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#marovgribs:spawns_puffer",
+  "spawners": {
+    "type": "marovgribs:puffer",
+    "weight": 50,
+    "minCount": 1,
+    "maxCount": 2
+  }
+}

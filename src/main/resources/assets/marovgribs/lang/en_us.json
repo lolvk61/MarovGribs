@@ -1,0 +1,23 @@
+{
+  "itemGroup.marovgribs": "Marov Gribs",
+  "block.marovgribs.hopcap": "Hopcap",
+  "block.marovgribs.hopcap.desc": "Tosses whoever steps on it into the air. Eat it: Jump Boost II for 30 s.",
+  "block.marovgribs.glowcap": "Glowcap",
+  "block.marovgribs.glowcap.desc": "Glows and grows in caves, even on bare stone. Eat it: Night Vision for 60 s.",
+  "block.marovgribs.puffball": "Puffball",
+  "block.marovgribs.puffball.desc": "Puffs blinding spores at anyone who walks into it. Sneak to pass safely. Eat it: Slow Falling.",
+  "block.marovgribs.fly_agaric": "Fly Agaric",
+  "block.marovgribs.fly_agaric.desc": "Eat it: Strength II, but also nausea and poison. Agaric Guards look after these.",
+  "item.marovgribs.spore_bomb": "Spore Bomb",
+  "item.marovgribs.spore_bomb.desc": "Throw it: the spore cloud blinds, slows and weakens.",
+  "item.marovgribs.marov_stew": "Marov Stew",
+  "item.marovgribs.marov_stew.desc": "The best of all four mushrooms, minus the poison.",
+  "item.marovgribs.hopling_spawn_egg": "Hopling Spawn Egg",
+  "item.marovgribs.puffer_spawn_egg": "Puffer Spawn Egg",
+  "item.marovgribs.agaric_guard_spawn_egg": "Agaric Guard Spawn Egg",
+  "entity.marovgribs.hopling": "Hopling",
+  "entity.marovgribs.puffer": "Puffer",
+  "entity.marovgribs.agaric_guard": "Agaric Guard",
+  "entity.marovgribs.spore_bomb": "Spore Bomb",
+  "entity.marovgribs.spore_cloud": "Spore Cloud"
+}

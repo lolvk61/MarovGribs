@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "marovgribs:puffball"
+    },
+    {
+      "item": "marovgribs:puffball"
+    },
+    {
+      "item": "minecraft:string"
+    }
+  ],
+  "result": {
+    "id": "marovgribs:spore_bomb",
+    "count": 2
+  }
+}

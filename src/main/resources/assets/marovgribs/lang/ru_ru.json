@@ -1,0 +1,23 @@
+{
+  "itemGroup.marovgribs": "Грибы Марова",
+  "block.marovgribs.hopcap": "Прыгунок",
+  "block.marovgribs.hopcap.desc": "Подбрасывает того, кто на него наступит. Если съесть: прыгучесть II на 30 с.",
+  "block.marovgribs.glowcap": "Светогриб",
+  "block.marovgribs.glowcap.desc": "Светится и растёт в пещерах, даже на голом камне. Если съесть: ночное зрение на 60 с.",
+  "block.marovgribs.puffball": "Дождевик",
+  "block.marovgribs.puffball.desc": "Пыхает слепящими спорами в каждого, кто пройдёт сквозь него. Крадучись можно пройти. Если съесть: плавное падение.",
+  "block.marovgribs.fly_agaric": "Мухомор",
+  "block.marovgribs.fly_agaric.desc": "Если съесть: сила II, но тошнота и яд. Мухоморычи берегут свои мухоморы.",
+  "item.marovgribs.spore_bomb": "Споровая бомба",
+  "item.marovgribs.spore_bomb.desc": "Брось: облако спор ослепляет, замедляет и ослабляет.",
+  "item.marovgribs.marov_stew": "Похлёбка Марова",
+  "item.marovgribs.marov_stew.desc": "Всё лучшее от четырёх грибов, только без отравы.",
+  "item.marovgribs.hopling_spawn_egg": "Яйцо призыва прыгунца",
+  "item.marovgribs.puffer_spawn_egg": "Яйцо призыва пыхтуна",
+  "item.marovgribs.agaric_guard_spawn_egg": "Яйцо призыва мухоморыча",
+  "entity.marovgribs.hopling": "Прыгунец",
+  "entity.marovgribs.puffer": "Пыхтун",
+  "entity.marovgribs.agaric_guard": "Мухоморыч",
+  "entity.marovgribs.spore_bomb": "Споровая бомба",
+  "entity.marovgribs.spore_cloud": "Облако спор"
+}

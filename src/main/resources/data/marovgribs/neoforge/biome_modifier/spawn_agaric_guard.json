@@ -1,0 +1,10 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#marovgribs:spawns_agaric_guard",
+  "spawners": {
+    "type": "marovgribs:agaric_guard",
+    "weight": 6,
+    "minCount": 2,
+    "maxCount": 3
+  }
+}
