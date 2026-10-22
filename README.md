@@ -12,7 +12,7 @@ russulas, an ore-hoarding miner, and the Death Cap boss of the dark forest.
 
 ![build](https://github.com/lolvk61/MarovGribs/actions/workflows/build.yml/badge.svg)
 
-NeoForge • Minecraft 1.21.1 • Java 21 • v0.2.0 • [Download](../../releases/latest)
+NeoForge • Minecraft 1.21.1 • Java 21 • v0.3.0 • [Download](../../releases/latest)
 
 [English](#english) | [Русский](#русский)
 
