@@ -62,6 +62,9 @@ public class MinerGrib extends PathfinderMob {
     public static final int CALM_TICKS = 100;
     public static final int GLOWCAP_EVERY = 10;
     public static final float MAX_HARDNESS = 4.5F;
+    /** After this many dead ends in a row it stops digging for a while and wanders off instead. */
+    public static final int GIVE_UP_AFTER = 4;
+    public static final int REST_TICKS = 100;
     private static final EntityDataAccessor<Boolean> DATA_HIDING = SynchedEntityData.defineId(MinerGrib.class, EntityDataSerializers.BOOLEAN);
 
     private final SimpleContainer backpack = new SimpleContainer(BACKPACK_SIZE);
@@ -269,7 +272,8 @@ public class MinerGrib extends PathfinderMob {
 
     /**
      * Digs a two-block-high tunnel one step at a time, turning now and then. Near the surface it
-     * digs a staircase down instead. Steers clear of water and lava.
+     * digs a staircase down instead, or straight ahead when the way down is blocked. Steers clear
+     * of water and lava, and gives up for a while after a few dead ends so it never freezes.
      */
     private class DigTunnelGoal extends Goal {
         private final List<BlockPos> toBreak = new ArrayList<>();
@@ -280,6 +284,8 @@ public class MinerGrib extends PathfinderMob {
         private int breakTicks;
         private int breakTotal;
         private int walkTicks;
+        private int deadEnds;
+        private int restUntil;
 
         DigTunnelGoal() {
             setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
@@ -287,12 +293,13 @@ public class MinerGrib extends PathfinderMob {
 
         @Override
         public boolean canUse() {
-            return !isHiding() && onGround() && EventHooks.canEntityGrief(level(), MinerGrib.this) && random.nextInt(5) == 0;
+            return !isHiding() && onGround() && tickCount >= restUntil && EventHooks.canEntityGrief(level(), MinerGrib.this)
+                    && random.nextInt(5) == 0;
         }
 
         @Override
         public boolean canContinueToUse() {
-            return !isHiding() && EventHooks.canEntityGrief(level(), MinerGrib.this);
+            return !isHiding() && deadEnds < GIVE_UP_AFTER && EventHooks.canEntityGrief(level(), MinerGrib.this);
         }
 
         @Override
@@ -302,6 +309,7 @@ public class MinerGrib extends PathfinderMob {
 
         @Override
         public void start() {
+            deadEnds = 0;
             if (digDirection == null) {
                 digDirection = randomHorizontal(random);
             }
@@ -310,6 +318,9 @@ public class MinerGrib extends PathfinderMob {
 
         @Override
         public void stop() {
+            if (deadEnds >= GIVE_UP_AFTER) {
+                restUntil = tickCount + REST_TICKS;
+            }
             if (breaking != null) {
                 level().destroyBlockProgress(getId(), breaking, -1);
             }
@@ -349,12 +360,15 @@ public class MinerGrib extends PathfinderMob {
                 return;
             }
             if (stepTo != null) {
-                if (blockPosition().equals(stepTo)) {
+                // Lands lower than planned if the step was over a ledge; that still counts.
+                BlockPos at = blockPosition();
+                if (at.getX() == stepTo.getX() && at.getZ() == stepTo.getZ() && onGround()) {
                     arrived();
                 } else if (++walkTicks > 60) {
                     turn();
                 } else {
-                    getNavigation().moveTo(stepTo.getX() + 0.5, stepTo.getY(), stepTo.getZ() + 0.5, 1.0);
+                    // The navigator treats a neighbouring block as already reached, so steer directly.
+                    getMoveControl().setWantedPosition(stepTo.getX() + 0.5, stepTo.getY(), stepTo.getZ() + 0.5, 1.0);
                 }
                 return;
             }
@@ -362,6 +376,7 @@ public class MinerGrib extends PathfinderMob {
         }
 
         private void arrived() {
+            deadEnds = 0;
             tunnelLength++;
             if (tunnelLength % GLOWCAP_EVERY == 0 && digDirection != null) {
                 BlockPos behind = blockPosition().relative(digDirection.getOpposite());
@@ -375,6 +390,7 @@ public class MinerGrib extends PathfinderMob {
         }
 
         private void turn() {
+            deadEnds++;
             digDirection = randomHorizontal(random);
             toBreak.clear();
             stepTo = null;
@@ -390,14 +406,17 @@ public class MinerGrib extends PathfinderMob {
             boolean nearSurface = level().canSeeSky(feet) || feet.getY() > 40;
             boolean down = feet.getY() > level().getMinBuildHeight() + 8 && (nearSurface || random.nextInt(6) == 0);
             toBreak.clear();
-            if (down) {
+            if (down && passable(front) && passable(front.below())) {
                 toBreak.add(front);
                 toBreak.add(front.below());
                 stepTo = front.below();
-            } else {
+            } else if (passable(front.above()) && passable(front)) {
                 toBreak.add(front.above());
                 toBreak.add(front);
                 stepTo = front;
+            } else {
+                turn();
+                return;
             }
             for (BlockPos pos : toBreak) {
                 if (nearFluid(pos)) {
@@ -405,6 +424,12 @@ public class MinerGrib extends PathfinderMob {
                     return;
                 }
             }
+        }
+
+        /** Already open, or something it can dig through. */
+        private boolean passable(BlockPos pos) {
+            BlockState state = level().getBlockState(pos);
+            return state.canBeReplaced() || canMine(level(), pos, state);
         }
 
         private boolean nearFluid(BlockPos pos) {

@@ -396,13 +396,32 @@ public class GribTests {
         }
         helper.setBlock(CENTER, Blocks.AIR);
         helper.setBlock(CENTER.above(), Blocks.AIR);
-        helper.spawn(ModEntities.MINER_GRIB.get(), CENTER);
+        MinerGrib miner = helper.spawn(ModEntities.MINER_GRIB.get(), CENTER);
+        BlockPos start = helper.absolutePos(CENTER);
         helper.succeedWhen(() -> {
+            helper.assertTrue(!miner.blockPosition().equals(start), "miner digs but never walks into the tunnel");
             long dug = BlockPos.betweenClosedStream(new BlockPos(0, 1, 0), new BlockPos(SIZE - 1, 2, SIZE - 1))
                     .filter(pos -> helper.getBlockState(pos).isAir())
                     .count();
             helper.assertTrue(dug >= 4, "miner dug only " + (dug - 2) + " blocks");
         });
+    }
+
+    /**
+     * On a giant mushroom cap he cannot dig down, so he has to walk on instead of freezing. The cap is
+     * at the top of the arena: right at the bottom of the world he never tries to dig down.
+     */
+    @GameTest(template = ARENA, timeoutTicks = 300)
+    public static void minerWalksOnWhereItCannotDig(GameTestHelper helper) {
+        for (int x = 0; x < SIZE; x++) {
+            for (int z = 0; z < SIZE; z++) {
+                helper.setBlock(new BlockPos(x, 4, z), Blocks.RED_MUSHROOM_BLOCK);
+            }
+        }
+        BlockPos onCap = CENTER.above(4);
+        MinerGrib miner = helper.spawn(ModEntities.MINER_GRIB.get(), onCap);
+        BlockPos start = helper.absolutePos(onCap);
+        helper.succeedWhen(() -> helper.assertTrue(!miner.blockPosition().equals(start), "miner is stuck in place"));
     }
 
     @GameTest(template = ARENA)
