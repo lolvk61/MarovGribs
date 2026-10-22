@@ -12,6 +12,7 @@ import ru.marov.gribs.registry.ModCreativeTabs;
 import ru.marov.gribs.registry.ModDataComponents;
 import ru.marov.gribs.registry.ModEntities;
 import ru.marov.gribs.registry.ModItems;
+import ru.marov.gribs.registry.ModPotions;
 import ru.marov.gribs.registry.ModRecipes;
 import ru.marov.gribs.registry.ModWorldgen;
 
@@ -26,6 +27,7 @@ public class MarovGribs {
         ModArmorMaterials.MATERIALS.register(modBus);
         ModItems.ITEMS.register(modBus);
         ModEntities.ENTITY_TYPES.register(modBus);
+        ModPotions.POTIONS.register(modBus);
         ModRecipes.SERIALIZERS.register(modBus);
         ModWorldgen.FEATURES.register(modBus);
         ModCreativeTabs.TABS.register(modBus);

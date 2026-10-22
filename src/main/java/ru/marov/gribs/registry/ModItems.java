@@ -17,45 +17,22 @@ import ru.marov.gribs.item.SporeBombItem;
 public final class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MarovGribs.MODID);
 
-    public static final FoodProperties HOPCAP_FOOD = new FoodProperties.Builder()
-            .nutrition(2).saturationModifier(0.3F).alwaysEdible()
-            .effect(() -> new MobEffectInstance(MobEffects.JUMP, 600, 1), 1.0F)
-            .build();
-    public static final FoodProperties GLOWCAP_FOOD = new FoodProperties.Builder()
-            .nutrition(2).saturationModifier(0.3F).alwaysEdible()
-            .effect(() -> new MobEffectInstance(MobEffects.NIGHT_VISION, 1200), 1.0F)
-            .build();
-    public static final FoodProperties PUFFBALL_FOOD = new FoodProperties.Builder()
-            .nutrition(4).saturationModifier(0.6F)
-            .effect(() -> new MobEffectInstance(MobEffects.SLOW_FALLING, 300), 1.0F)
-            .build();
+    // Eaten, mushrooms only feed you; their powers come from extracts (see ModPotions).
+    // The fly agaric is the exception: it poisons and turns your stomach.
+    public static final FoodProperties HOPCAP_FOOD = mushroomFood(2, 0.3F);
+    public static final FoodProperties GLOWCAP_FOOD = mushroomFood(2, 0.3F);
+    public static final FoodProperties PUFFBALL_FOOD = mushroomFood(4, 0.6F);
+    public static final FoodProperties CHANTERELLE_FOOD = mushroomFood(3, 0.5F);
+    public static final FoodProperties PARASOL_FOOD = mushroomFood(4, 0.6F);
+    public static final FoodProperties RUSSULA_FOOD = mushroomFood(3, 0.4F);
+    public static final FoodProperties CORDYCEPS_FOOD = mushroomFood(2, 0.3F);
     public static final FoodProperties FLY_AGARIC_FOOD = new FoodProperties.Builder()
             .nutrition(1).saturationModifier(0.1F).alwaysEdible()
-            .effect(() -> new MobEffectInstance(MobEffects.DAMAGE_BOOST, 600, 1), 1.0F)
-            .effect(() -> new MobEffectInstance(MobEffects.CONFUSION, 300), 1.0F)
             .effect(() -> new MobEffectInstance(MobEffects.POISON, 100), 1.0F)
-            .build();
-    public static final FoodProperties CHANTERELLE_FOOD = new FoodProperties.Builder()
-            .nutrition(2).saturationModifier(0.4F).alwaysEdible()
-            .effect(() -> new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 600), 1.0F)
-            .build();
-    public static final FoodProperties PARASOL_FOOD = new FoodProperties.Builder()
-            .nutrition(4).saturationModifier(0.6F)
-            .build();
-    public static final FoodProperties RUSSULA_FOOD = new FoodProperties.Builder()
-            .nutrition(3).saturationModifier(0.4F)
-            .build();
-    public static final FoodProperties CORDYCEPS_FOOD = new FoodProperties.Builder()
-            .nutrition(2).saturationModifier(0.3F).alwaysEdible()
-            .effect(() -> new MobEffectInstance(MobEffects.DIG_SPEED, 1200), 1.0F)
-            .effect(() -> new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 600), 1.0F)
+            .effect(() -> new MobEffectInstance(MobEffects.CONFUSION, 300), 1.0F)
             .build();
     public static final FoodProperties MAROV_STEW_FOOD = new FoodProperties.Builder()
-            .nutrition(8).saturationModifier(0.8F).alwaysEdible().usingConvertsTo(Items.BOWL)
-            .effect(() -> new MobEffectInstance(MobEffects.JUMP, 1200, 1), 1.0F)
-            .effect(() -> new MobEffectInstance(MobEffects.NIGHT_VISION, 2400), 1.0F)
-            .effect(() -> new MobEffectInstance(MobEffects.SLOW_FALLING, 1200), 1.0F)
-            .effect(() -> new MobEffectInstance(MobEffects.DAMAGE_BOOST, 1200), 1.0F)
+            .nutrition(10).saturationModifier(0.9F).usingConvertsTo(Items.BOWL)
             .build();
 
     public static final DeferredItem<BlockItem> HOPCAP = ITEMS.register("hopcap",
@@ -110,5 +87,9 @@ public final class ModItems {
             () -> new DeferredSpawnEggItem(ModEntities.DEATH_CAP, 0xC2CC98, 0xEDEBDD, new Item.Properties()));
 
     private ModItems() {
+    }
+
+    private static FoodProperties mushroomFood(int nutrition, float saturation) {
+        return new FoodProperties.Builder().nutrition(nutrition).saturationModifier(saturation).build();
     }
 }

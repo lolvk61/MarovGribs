@@ -29,16 +29,21 @@ A boss, six new mobs, two new mushrooms, forest mycelium and mushroom beds that 
 see below.
 
 ### Mushrooms
+Eaten, mushrooms only feed you (a raw fly agaric poisons you too). Their powers come from
+**extracts**: awkward potion + mushroom in a brewing stand, redstone to make it last longer;
+splash, lingering and tipped-arrow versions work as usual.
+
 - **Hopcap** — tosses whoever steps on it into the air and cushions the landing. Sneak to walk
-  over it. Eat it for Jump Boost II.
-- **Glowcap** — lights up caves and grows even on bare stone. Eat it for Night Vision.
+  over it. Extract: Jump Boost II.
+- **Glowcap** — lights up caves and grows even on bare stone. Extract: Night Vision.
 - **Puffball** — a natural trap: puffs a blinding, slowing spore cloud at anything that walks
-  into it, then refills. Sneak past it safely. Eat it for Slow Falling.
-- **Fly Agaric** — Strength II, at the price of nausea and poison.
-- **Chanterelle** *(new)* — a mushroom with a fox's tail, eat it for Speed. Let a fox take one
-  in its mouth and something happens…
+  into it, then refills. Sneak past it safely. Extract: Slow Falling.
+- **Fly Agaric** — poisonous raw. Extract: Strength II with a touch of nausea.
+- **Chanterelle** *(new)* — a mushroom with a fox's tail. Extract: Speed. Let a fox take one in
+  its mouth and something happens…
 - **Parasol sprout** *(new)* — bone meal grows it into a huge parasol 4–5 blocks tall.
-  Zombies and skeletons caught in daylight run for its shade.
+  Zombies and skeletons caught in daylight run for its shade. Extract: Fire Resistance.
+- **Cordyceps** *(new)* — drops from cordyceps zombies. Extract: Haste II.
 
 Mushrooms spread on their own and sprout from bone meal. **Forest Mycelium** *(new)* grows
 outside mushroom islands, and mushrooms on it spread five times faster. Dense beds of one
@@ -70,8 +75,8 @@ rage that heals it on mycelium. Drops its cap, a helmet that keeps poison and sp
 ### Items
 - **Spore clouds** — puffballs, puffers and spore bombs release puffy clouds that affect
   everything inside them.
-- **Spore Bomb**, **Marov Stew**, **Mortar and Pestle** *(new: grinds russulas and other
-  mushrooms into dye)*, **Cordyceps** *(new)*, **Death Cap Hat** *(new)*.
+- **Spore Bomb**, **Marov Stew** (very filling), **Mortar and Pestle** *(new: a stick and three
+  cobblestone in a V; grinds russulas and other mushrooms into dye)*, **Death Cap Hat** *(new)*.
 - Every item explains its ability in its tooltip (English and Russian).
 
 ### Installation
@@ -103,14 +108,33 @@ rage that heals it on mycelium. Drops its cap, a helmet that keeps poison and sp
 ### Грибы
 Все грибы медленно расползаются сами, от костной муки рядом вырастает ещё один.
 
-| Гриб | Где растёт | Способность | Если съесть |
-|------|------------|-------------|-------------|
-| **Прыгунок** | леса, березняки, луга, грибные поля | подбрасывает того, кто наступит, и гасит урон от падения; крадучись не срабатывает | прыгучесть II, 30 с |
-| **Светогриб** | пещеры верхнего мира, растёт и на камне | светится (уровень 12), летят искорки | ночное зрение, 60 с |
-| **Дождевик** | равнины, луга, болота, тёмный лес | пыхает облаком спор: слепота и замедление II всем, кто войдёт; перезаряжается 5 с | плавное падение, 15 с |
-| **Мухомор** | тёмный лес, тайга, березняки, грибные поля | если сорвать рядом с мухоморычами, они нападут | сила II, но тошнота и яд |
-| **Лисичка** | тайга, роща | гриб с лисьим хвостом; если лиса возьмёт её в рот, превратится во FlynnFlyTaggart | скорость, 30 с |
-| **Гриб-зонтик** | равнины, саванна, луга | костная мука выращивает из ростка огромный зонтик в 4–5 блоков; в его тени прячется нежить | сытный |
+Съеденные грибы только утоляют голод, а мухомор вдобавок отравляет и вызывает тошноту.
+Их силы достаются только через экстракты (см. ниже).
+
+| Гриб | Где растёт | Способность | Экстракт |
+|------|------------|-------------|----------|
+| **Прыгунок** | леса, березняки, луга, грибные поля | подбрасывает того, кто наступит, и гасит урон от падения; крадучись не срабатывает | прыгучесть II |
+| **Светогриб** | пещеры верхнего мира, растёт и на камне | светится (уровень 12), летят искорки | ночное зрение |
+| **Дождевик** | равнины, луга, болота, тёмный лес | пыхает облаком спор: слепота и замедление II всем, кто войдёт; перезаряжается 5 с | плавное падение |
+| **Мухомор** | тёмный лес, тайга, березняки, грибные поля | если сорвать рядом с мухоморычами, они нападут; сырой отравляет | сила II и немного тошноты |
+| **Лисичка** | тайга, роща | гриб с лисьим хвостом; если лиса возьмёт её в рот, превратится во FlynnFlyTaggart | скорость |
+| **Гриб-зонтик** | равнины, саванна, луга | костная мука выращивает из ростка огромный зонтик в 4–5 блоков; в его тени прячется нежить | огнестойкость |
+| **Кордицепс** | падает с зомби с кордицепсом | — | спешка II |
+
+### Экстракты
+Варятся в варочной стойке: **неуклюжее зелье + гриб = «Экстракт …»** («Экстракт мухомора»,
+«Экстракт лисички» и т. д.). Красная пыль продлевает действие, порох делает взрывной экстракт,
+драконье дыхание — оседающий, а из оседающего получаются стрелы с экстрактом.
+
+| Экстракт | Эффект | Обычный | С красной пылью |
+|----------|--------|---------|-----------------|
+| прыгунка | прыгучесть II | 3:00 | 8:00 |
+| светогриба | ночное зрение | 3:00 | 8:00 |
+| дождевика | плавное падение | 1:30 | 4:00 |
+| мухомора | сила II + тошнота 10 с | 1:30 | 4:00 |
+| лисички | скорость | 3:00 | 8:00 |
+| гриба-зонтика | огнестойкость | 3:00 | 8:00 |
+| кордицепса | спешка II | 3:00 | 8:00 |
 
 ### Грибница
 Своя грибница, которая встречается не только на грибных островах: пятнами в тёмном лесу,
@@ -167,10 +191,10 @@ rage that heals it on mycelium. Drops its cap, a helmet that keeps poison and sp
 | Предмет | Рецепт | Что делает |
 |---------|--------|------------|
 | **Споровая бомба** | 2 дождевика + нить → 2 бомбы | бросается, облако ослепляет, замедляет и ослабляет |
-| **Похлёбка Марова** | миска + все четыре гриба | прыгучесть, ночное зрение, плавное падение и сила без отравы |
-| **Ступка с пестиком** | палка + 3 камня буквой V | на верстаке растирает гриб в 2 красителя и изнашивается на 1 (64 раза) |
+| **Похлёбка Марова** | миска + все четыре гриба | очень сытная еда (10 голода) |
+| **Ступка с пестиком** | палка в правом верхнем углу + 3 булыжника (или чернокамня, глубинного булыжника) буквой V | на верстаке растирает гриб в 2 красителя и изнашивается на 1 (64 раза). Рецепт появляется в книге рецептов, как только у тебя есть любой гриб из мода |
 | **Краситель из ступки** | ступка + сыроежка | цвет сыроежки; ещё мухомор → красный, лисичка → оранжевый, прыгунок → лаймовый, светогриб → бирюзовый, дождевик → белый |
-| **Кордицепс** | падает с зомби с кордицепсом | если съесть: спешка на 60 с и скорость на 30 с |
+| **Кордицепс** | падает с зомби с кордицепсом | еда; варится в экстракт спешки II |
 | **Шляпа поганки** | падает с босса | шлем: яд и облака спор не действуют |
 
 Всё есть во вкладке «Грибы Марова» в творческом режиме, вместе с яйцами призыва и сыроежками

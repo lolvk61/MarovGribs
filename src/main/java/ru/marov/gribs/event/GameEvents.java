@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.brewing.RegisterBrewingRecipesEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
@@ -26,6 +27,7 @@ import ru.marov.gribs.entity.ai.SeekParasolShadeGoal;
 import ru.marov.gribs.registry.ModBlocks;
 import ru.marov.gribs.registry.ModEntities;
 import ru.marov.gribs.registry.ModItems;
+import ru.marov.gribs.registry.ModPotions;
 import ru.marov.gribs.registry.ModTags;
 
 @EventBusSubscriber(modid = MarovGribs.MODID)
@@ -87,6 +89,12 @@ public final class GameEvents {
                 && mob.getType().is(ModTags.SEEKS_PARASOL_SHADE)) {
             mob.goalSelector.addGoal(1, new SeekParasolShadeGoal(mob));
         }
+    }
+
+    /** Awkward potion + mushroom = its extract; see ModPotions. */
+    @SubscribeEvent
+    static void onBrewingRecipes(RegisterBrewingRecipesEvent event) {
+        ModPotions.registerBrewing(event.getBuilder());
     }
 
     /** The death cap's hat keeps poison off its wearer. */

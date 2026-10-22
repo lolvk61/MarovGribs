@@ -18,6 +18,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.alchemy.PotionBrewing;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.GameType;
@@ -45,6 +50,7 @@ import ru.marov.gribs.item.RussulaItem;
 import ru.marov.gribs.registry.ModBlocks;
 import ru.marov.gribs.registry.ModEntities;
 import ru.marov.gribs.registry.ModItems;
+import ru.marov.gribs.registry.ModPotions;
 import ru.marov.gribs.worldgen.HugeParasolFeature;
 
 /** In-world checks of every mushroom ability. Run with: gradlew runGameTestServer */
@@ -300,6 +306,53 @@ public class GribTests {
         helper.assertTrue(result.is(Items.PURPLE_DYE) && result.getCount() == 2, "expected 2 purple dye, got " + result);
         ItemStack worn = recipe.get().value().getRemainingItems(input).get(0);
         helper.assertTrue(worn.is(ModItems.MORTAR.get()) && worn.getDamageValue() == 1, "mortar was not kept with 1 wear");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void mushroomsBrewIntoExtracts(GameTestHelper helper) {
+        PotionBrewing brewing = helper.getLevel().potionBrewing();
+        ItemStack awkward = PotionContents.createItemStack(Items.POTION, Potions.AWKWARD);
+        ItemStack extract = brewing.mix(new ItemStack(ModItems.FLY_AGARIC.get()), awkward);
+        helper.assertTrue(extract.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).is(ModPotions.FLY_AGARIC_EXTRACT),
+                "awkward potion + fly agaric did not brew a fly agaric extract");
+        ItemStack longExtract = brewing.mix(new ItemStack(Items.REDSTONE), extract);
+        helper.assertTrue(longExtract.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).is(ModPotions.LONG_FLY_AGARIC_EXTRACT),
+                "redstone did not lengthen the extract");
+        ItemStack chanterelle = brewing.mix(new ItemStack(ModItems.CHANTERELLE.get()), awkward);
+        helper.assertTrue(chanterelle.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).is(ModPotions.CHANTERELLE_EXTRACT),
+                "awkward potion + chanterelle did not brew a chanterelle extract");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void eatenMushroomsOnlyFeed(GameTestHelper helper) {
+        for (var item : List.of(ModItems.HOPCAP, ModItems.GLOWCAP, ModItems.PUFFBALL, ModItems.CHANTERELLE,
+                ModItems.PARASOL_SPROUT, ModItems.RUSSULA, ModItems.CORDYCEPS)) {
+            FoodProperties food = new ItemStack(item.get()).get(DataComponents.FOOD);
+            helper.assertTrue(food != null && food.nutrition() > 0 && food.effects().isEmpty(),
+                    item.getId() + " should only feed, without effects");
+        }
+        FoodProperties agaric = new ItemStack(ModItems.FLY_AGARIC.get()).get(DataComponents.FOOD);
+        helper.assertTrue(agaric != null && agaric.effects().stream().anyMatch(e -> e.effect().is(MobEffects.POISON))
+                        && agaric.effects().stream().anyMatch(e -> e.effect().is(MobEffects.CONFUSION))
+                        && agaric.effects().stream().noneMatch(e -> e.effect().is(MobEffects.DAMAGE_BOOST)),
+                "a raw fly agaric should poison and sicken, not strengthen");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
+    public static void mortarIsCraftable(GameTestHelper helper) {
+        ItemStack stick = new ItemStack(Items.STICK);
+        ItemStack stone = new ItemStack(Items.COBBLESTONE);
+        CraftingInput input = CraftingInput.of(3, 3, List.of(
+                ItemStack.EMPTY, ItemStack.EMPTY, stick,
+                stone, ItemStack.EMPTY, stone,
+                ItemStack.EMPTY, stone, ItemStack.EMPTY));
+        var recipe = helper.getLevel().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, input, helper.getLevel());
+        helper.assertTrue(recipe.isPresent(), "no recipe for the mortar");
+        helper.assertTrue(recipe.get().value().assemble(input, helper.getLevel().registryAccess()).is(ModItems.MORTAR.get()),
+                "the recipe does not make a mortar");
         helper.succeed();
     }
 

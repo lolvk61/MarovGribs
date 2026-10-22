@@ -1,0 +1,40 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_mushroom": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "marovgribs:hopcap",
+              "marovgribs:glowcap",
+              "marovgribs:puffball",
+              "marovgribs:fly_agaric",
+              "marovgribs:chanterelle",
+              "marovgribs:parasol_sprout",
+              "marovgribs:russula"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "marovgribs:spore_bomb"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_mushroom",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "marovgribs:spore_bomb"
+    ]
+  }
+}
