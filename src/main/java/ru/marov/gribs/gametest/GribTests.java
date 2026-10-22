@@ -406,6 +406,18 @@ public class GribTests {
     }
 
     @GameTest(template = ARENA)
+    public static void minerFitsOneBlockGaps(GameTestHelper helper) {
+        grassFloor(helper);
+        helper.setBlock(CENTER.above(), Blocks.STONE);
+        MinerGrib miner = helper.spawn(ModEntities.MINER_GRIB.get(), CENTER.east(2));
+        Vec3 gap = helper.absoluteVec(Vec3.atBottomCenterOf(CENTER));
+        helper.assertTrue(miner.getBbHeight() < 1.0F, "miner is a full block tall");
+        helper.assertTrue(helper.getLevel().noCollision(miner, miner.getDimensions(miner.getPose()).makeBoundingBox(gap)),
+                "miner does not fit under a one-block ceiling");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA)
     public static void minerWallsItselfInWhenHit(GameTestHelper helper) {
         grassFloor(helper);
         MinerGrib miner = helper.spawn(ModEntities.MINER_GRIB.get(), CENTER);

@@ -53,6 +53,9 @@ import ru.marov.gribs.registry.ModBlocks;
  * It only digs natural blocks (stone, dirt, gravel, sand, ores, cobblestone), never builds.
  */
 public class MinerGrib extends PathfinderMob {
+    /** Drawn at 14/16 of the model so it stays under a block tall and fits one-block-high gaps. */
+    public static final float SCALE = 0.875F;
+    public static final float HEIGHT = SCALE;
     public static final int BACKPACK_SIZE = 18;
     public static final double WALL_UP_RANGE = 8.0;
     public static final double CALM_RANGE = 16.0;

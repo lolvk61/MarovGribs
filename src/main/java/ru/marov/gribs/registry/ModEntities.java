@@ -61,7 +61,7 @@ public final class ModEntities {
                     .build("russula"));
     public static final DeferredHolder<EntityType<?>, EntityType<MinerGrib>> MINER_GRIB = ENTITY_TYPES.register("miner_grib",
             () -> EntityType.Builder.of(MinerGrib::new, MobCategory.MONSTER)
-                    .sized(0.6F, 1.0F)
+                    .sized(0.5F, MinerGrib.HEIGHT)
                     .clientTrackingRange(8)
                     .build("miner_grib"));
     public static final DeferredHolder<EntityType<?>, EntityType<CordycepsZombie>> CORDYCEPS_ZOMBIE = ENTITY_TYPES.register("cordyceps_zombie",

@@ -82,8 +82,8 @@ public final class MarovGribsClient {
                         0.55F, guard -> guard.isSmiley() ? AGARIC_GUARD_SMILEY : AGARIC_GUARD, 1.0F));
         event.registerEntityRenderer(ModEntities.RUSSULA.get(), RussulaRenderer::new);
         event.registerEntityRenderer(ModEntities.MINER_GRIB.get(),
-                ctx -> new GribRenderer<MinerGrib, MinerGribModel>(ctx, new MinerGribModel(ctx.bakeLayer(MinerGribModel.LAYER)), 0.35F, "miner_grib")
-                        .withGlow("miner_grib"));
+                ctx -> new GribRenderer<MinerGrib, MinerGribModel>(ctx, new MinerGribModel(ctx.bakeLayer(MinerGribModel.LAYER)), 0.3F,
+                        GribRenderer.texture("miner_grib"), MinerGrib.SCALE).withGlow("miner_grib"));
         event.registerEntityRenderer(ModEntities.DEATH_CAP.get(),
                 ctx -> new GribRenderer<DeathCap, DeathCapModel>(ctx, new DeathCapModel(ctx.bakeLayer(DeathCapModel.LAYER)), 1.2F,
                         GribRenderer.texture("death_cap"), DeathCap.SCALE).withGlow("death_cap"));
