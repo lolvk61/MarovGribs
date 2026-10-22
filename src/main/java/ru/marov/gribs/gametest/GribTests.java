@@ -19,6 +19,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.alchemy.PotionContents;
@@ -375,6 +376,12 @@ public class GribTests {
         helper.assertTrue(infected.getMaxHealth() > plain.getMaxHealth(), "cordyceps zombie is not tougher");
         helper.assertTrue(infected.getAttributeValue(Attributes.ATTACK_DAMAGE) > plain.getAttributeValue(Attributes.ATTACK_DAMAGE),
                 "cordyceps zombie does not hit harder");
+        infected.setGrowthVariant(7);
+        CompoundTag saved = new CompoundTag();
+        infected.addAdditionalSaveData(saved);
+        CordycepsZombie loaded = ModEntities.CORDYCEPS_ZOMBIE.get().create(helper.getLevel());
+        loaded.readAdditionalSaveData(saved);
+        helper.assertTrue(loaded.getGrowthVariant() == 7, "growth pattern was not saved");
         helper.succeed();
     }
 

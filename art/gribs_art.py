@@ -205,16 +205,79 @@ MOBS += [
             cube((0.5, -3.5, -4.5), (1, 1, 5), "plain", "3E5A2E"),
         ]),
     ]},
-    {"name": "cordyceps_growth", "geo_class": "CordycepsGeo", "x": -9.0, "preview": False, "parts": [
-        ("growth", None, (0, 24, 0), (0, 0, 0), [
-            cube((-4.5, -8.5, -4.5), (9, 1, 9), "plain", "E7C9A0"),
-            cube((-3, -12, -2), (1, 4, 1), "plain", "B8742E"), cube((-3.5, -14, -2.5), (2, 2, 2), "plain", "F08A24"),
-            cube((1, -13, 0), (1, 5, 1), "plain", "B8742E"), cube((0.5, -15, -0.5), (2, 2, 2), "plain", "F08A24"),
-            cube((-1, -11, 2), (1, 3, 1), "plain", "B8742E"), cube((-1.5, -13, 1.5), (2, 2, 2), "plain", "F08A24"),
-            cube((3, -11, -3), (1, 3, 1), "plain", "B8742E"), cube((2.5, -13, -3.5), (2, 2, 2), "plain", "F08A24"),
-        ]),
-    ]},
 ]
+
+# ---------------------------------------------------------------------------
+# Кордицепс на зомби: CORDYCEPS_VARIANTS вариантов, в каждом 5-7 очагов в разных местах тела.
+# Очаг = корочка на коже + ножка, торчащая наружу по нормали грани, + оранжевая булава на конце.
+# Части называются v<номер>_<часть зомби>; координаты — в системе этой части HumanoidModel,
+# игра ставит их через part.translateAndRotate (смещение 24 пикселя снимает рендерер).
+# ---------------------------------------------------------------------------
+CORDYCEPS_VARIANTS = 10
+HUMANOID = {  # часть: (шарнир, (начало куба, размер)) как в HumanoidModel
+    "head": ((0, 0, 0), ((-4, -8, -4), (8, 8, 8))),
+    "body": ((0, 0, 0), ((-4, 0, -2), (8, 12, 4))),
+    "right_arm": ((-5, 2, 0), ((-3, -2, -2), (4, 12, 4))),
+    "left_arm": ((5, 2, 0), ((-1, -2, -2), (4, 12, 4))),
+    "right_leg": ((-1.9, 12, 0), ((-2, 0, -2), (4, 12, 4))),
+    "left_leg": ((1.9, 12, 0), ((-2, 0, -2), (4, 12, 4))),
+}
+# Грани, из которых растёт: (часть, ось 0=x 1=y 2=z, куда смотрит нормаль, вес). Лицо — head, z, -1.
+CORDYCEPS_SITES = [
+    ("head", 2, -1, 4), ("head", 1, -1, 3), ("head", 0, -1, 1), ("head", 0, 1, 1), ("head", 2, 1, 2),
+    ("body", 2, -1, 3), ("body", 2, 1, 3),
+    ("right_arm", 0, -1, 2), ("right_arm", 1, -1, 1), ("right_arm", 2, 1, 1),
+    ("left_arm", 0, 1, 2), ("left_arm", 1, -1, 1), ("left_arm", 2, 1, 1),
+    ("right_leg", 2, -1, 2), ("right_leg", 0, -1, 1), ("right_leg", 2, 1, 1),
+    ("left_leg", 2, -1, 2), ("left_leg", 0, 1, 1), ("left_leg", 2, 1, 1),
+]
+CRUST, STALK, CLUB = "D9B98A", "B8742E", "F08A24"
+
+
+def cordyceps_growth(axis, sign, part, rng):
+    """Кубы одного очага на грани (axis, sign) части part."""
+    origin, size = HUMANOID[part][1]
+    surface = origin[axis] + (size[axis] if sign > 0 else 0)
+    across = [a for a in range(3) if a != axis]
+    base = {a: rng.randint(int(origin[a]) + 1, int(origin[a] + size[a]) - 2) for a in across}
+    length = rng.randint(1, 2)  # короткие: длинные ножки выглядели как антенны
+
+    def box(start, depth, half_width):
+        o, s = [0.0] * 3, [0] * 3
+        o[axis] = start if sign > 0 else start - depth
+        s[axis] = depth
+        for a in across:
+            o[a] = base[a] + 0.5 - half_width
+            s[a] = int(half_width * 2)
+        return tuple(o), tuple(s)
+
+    crust = box(surface, 1, 1.5) if rng.random() < 0.7 else None
+    stalk = box(surface, length, 0.5)
+    club = box(surface + sign * length, 2, 1.0)
+    cubes = [cube(*stalk, "plain", STALK), cube(*club, "plain", CLUB)]
+    if crust:
+        cubes.insert(0, cube(*crust, "plain", CRUST))
+    return cubes
+
+
+def cordyceps_variants():
+    """[(номер варианта, часть зомби, кубы)] для всех вариантов."""
+    weights = [w for *_, w in CORDYCEPS_SITES]
+    out = []
+    for v in range(CORDYCEPS_VARIANTS):
+        rng = random.Random(f"cordyceps/{v}")
+        per_part = {}
+        for part, axis, sign, _ in rng.choices(CORDYCEPS_SITES, weights, k=rng.randint(5, 7)):
+            per_part.setdefault(part, []).extend(cordyceps_growth(axis, sign, part, rng))
+        for part in HUMANOID:
+            if part in per_part:
+                out.append((v, part, per_part[part]))
+    return out
+
+
+MOBS.append({"name": "cordyceps_growth", "geo_class": "CordycepsGeo", "x": -9.0, "preview": False, "parts": [
+    (f"v{v}_{part}", None, (0, 24, 0), (0, 0, 0), cubes) for v, part, cubes in cordyceps_variants()
+]})
 
 # Лица рисуются на передней грани куба: (первая строка, сетка). k глаз, b бровь, m рот, p румянец, w блик,
 # g — светящийся глаз (попадает и в текстуру свечения).
@@ -1117,6 +1180,46 @@ def build_cloud_previews(puff_png):
     return objs
 
 
+CORDYCEPS_PREVIEW_ORIGIN = Vector((50.0, 0.0, 0.0))
+ZOMBIE_COLORS = {"head": "6A9A5B", "body": "2E8C8C", "right_arm": "6A9A5B", "left_arm": "6A9A5B",
+                 "right_leg": "3D3D8C", "left_leg": "3D3D8C"}
+
+
+def build_cordyceps_preview():
+    """Манекены зомби (руки вперёд, как в игре) со всеми вариантами кордицепса, в два ряда."""
+    coll = new_collection("cordyceps_preview")
+    for obj in list(coll.objects):
+        bpy.data.objects.remove(obj, do_unlink=True)
+    by_variant = {}
+    for v, part, cubes in cordyceps_variants():
+        by_variant.setdefault(v, {})[part] = cubes
+    for v in range(CORDYCEPS_VARIANTS):
+        row, col = divmod(v, 5)
+        base = CORDYCEPS_PREVIEW_ORIGIN + Vector((col * 2.0, row * 3.2, 0))
+        for part, (pivot, (origin, size)) in HUMANOID.items():
+            joint = bpy.data.objects.new(f"cz{v}:{part}", None)
+            joint.location = base + mc_to_blender_local(pivot, True)
+            joint.rotation_mode = "XZY"
+            if part.endswith("arm"):
+                joint.rotation_euler = (math.radians(-85), 0, 0)  # руки зомби вытянуты вперёд
+            joint["cordyceps"] = 1
+            coll.objects.link(joint)
+            pieces = [({"origin": origin, "size": size, "col": ZOMBIE_COLORS[part]})] + by_variant[v].get(part, [])
+            for i, piece in enumerate(pieces):
+                name = f"cz{v}:{part}:{i}"
+                obj = bpy.data.objects.new(name, box_mesh(name, piece["origin"], piece["size"]))
+                obj.data.materials.append(simple_material("flat:" + piece["col"], piece["col"]))
+                obj["cordyceps"] = 1
+                obj.parent = joint
+                coll.objects.link(obj)
+    ground_mesh = bpy.data.meshes.get("cordyceps_ground") or bpy.data.meshes.new("cordyceps_ground")
+    if not ground_mesh.vertices:
+        ground_mesh.from_pydata([(46, -4, 0), (62, -4, 0), (62, 8, 0), (46, 8, 0)], [], [(0, 1, 2, 3)])
+        ground_mesh.materials.append(simple_material("ground", "6FA34A"))
+    ground = bpy.data.objects.new("cordyceps_ground", ground_mesh)
+    coll.objects.link(ground)
+
+
 def render_to(path, target, scale, res):
     scene = bpy.context.scene
     cam = scene.camera
@@ -1296,6 +1399,7 @@ def export():
     puff_sheet().save(os.path.join(ASSETS, "textures", "entity", "spore_puff.png"))
     mod_icon().save(os.path.join(ASSETS, "icon.png"))
     build_cloud_previews(os.path.join(ASSETS, "textures", "entity", "spore_puff.png"))
+    build_cordyceps_preview()
 
     roots = [o for o in scene.objects if "geo_class" in o]
     for root in roots:
@@ -1379,6 +1483,7 @@ def export():
         o.hide_render = False
     render_to(os.path.join(PREVIEWS, "all.png"), Vector((0.9, 0.0, 1.6)), 10.6, (1280, 800))
     render_to(os.path.join(PREVIEWS, "spore_clouds.png"), Vector((27.5, 0, 1.3)), 25.0, (1280, 560))
+    render_to(os.path.join(PREVIEWS, "cordyceps_variants.png"), CORDYCEPS_PREVIEW_ORIGIN + Vector((4.0, 1.6, 1.0)), 12.0, (1280, 800))
 
     save_blend(scene)
     print("\n".join(["", "Marov Gribs: экспорт готов"] + report))
